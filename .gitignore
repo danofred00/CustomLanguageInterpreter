@@ -1,0 +1,12 @@
+
+# visual studio generated files
+.vs
+out
+
+# CMAKE generated files
+CMakeFiles
+CMakeScripts
+CMakeCache.txt
+CMakeSettings.json
+CMakeUserPresets.json
+CMakePresets.json
