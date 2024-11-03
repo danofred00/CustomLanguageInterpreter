@@ -34,6 +34,8 @@ enum class TokenType
 	NUMBER_LITERAL,
 	STRING_LITERAL,
 
+	/* Others */
+	END_OF_FILE,	// EOF of the source code
 };
 
 inline std::string tokenTypeToString(TokenType type)
@@ -58,6 +60,8 @@ inline std::string tokenTypeToString(TokenType type)
 		return "NUMBER_LITTERAL";
 	case TokenType::STRING_LITERAL:
 		return "STRING_LITERAL";
+	case TokenType::END_OF_FILE:
+		return "END_OF_FILE";
 	default:
 		return "UNKNOW";
 	}
@@ -99,3 +103,6 @@ typedef struct Token
 
 typedef std::vector<Token> TokenList;
 
+
+/* AST Types */
+typedef std::string Operator;

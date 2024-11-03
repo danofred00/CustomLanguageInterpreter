@@ -49,6 +49,7 @@ void Lexer::tokenize(const std::string & input)
 		}
 	}
 
+	tokens.push_back(Token(TokenType::END_OF_FILE, "EOF"));
 }
 
 TokenList Lexer::getTokens()

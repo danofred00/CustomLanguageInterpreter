@@ -9,6 +9,7 @@ add_executable (
 	"src/main.cpp" 
 	"src/lexer.cpp"
 	"src/utils.cpp"
+	"src/ast.cpp"
 )
 
 target_include_directories(Interpreter PUBLIC "include")
