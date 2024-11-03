@@ -12,4 +12,4 @@ endif()
 project ("Compiler")
 
 # Incluez les sous-projets.
-add_subdirectory ("Compiler")
+add_subdirectory ("Interpreter")
