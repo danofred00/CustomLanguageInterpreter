@@ -1,6 +1,12 @@
 #include <runtime/environment.hpp>
 
-Environment::Environment(Environment * parent) : parent { parent } { }
+Environment::Environment(Environment * parent) : parent { parent } 
+{ 
+    // Ensure to setup only the root environment
+    if(isGlobal()) {
+        setupGlobalScope(this);
+    }
+}
 
 Environment::~Environment()
 {
@@ -53,4 +59,15 @@ void Environment::defineVariable(const std::string& name, RuntimeValue* value)
         throw std::runtime_error("Variable already defined");
     }
     this->variables[name] = value;
+}
+
+
+void setupGlobalScope(Environment * env)
+{
+    /* TYPES SETUP */
+	env->defineVariable("false", new BoolValue(false));
+	env->defineVariable("true", new BoolValue(true));
+	env->defineVariable("null", new NullValue());
+
+    /* TODO: MATH CONSTANTS SETUP */
 }

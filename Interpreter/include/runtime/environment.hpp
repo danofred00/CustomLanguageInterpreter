@@ -7,27 +7,32 @@
 class Environment
 {
 
-    public:
-        Environment(Environment * parent = nullptr);
-        ~Environment();
+public:
+    Environment(Environment * parent = nullptr);
+    ~Environment();
 
-        void defineVariable(const std::string& name, RuntimeValue* value);
-        
-        RuntimeValue* getVariable(const std::string& name);
-        
-        void setVariable(const std::string& name, RuntimeValue* value);
+    void defineVariable(const std::string& name, RuntimeValue* value);
+    
+    RuntimeValue* getVariable(const std::string& name);
+    
+    void setVariable(const std::string& name, RuntimeValue* value);
 
-        bool exists(const std::string& name);
+    bool exists(const std::string& name);
 
-        Environment * resolve(const std::string& name);
+    Environment * resolve(const std::string& name);
 
-        const Environment * getParent() const {
-            return parent;
-        };
+    const Environment * getParent() const {
+        return parent;
+    };
 
+    bool isGlobal() const { return parent == nullptr; };
 
-
-    private:
-        Environment * parent;
-        std::map<std::string, RuntimeValue *> variables;
+private:
+    Environment * parent;
+    std::map<std::string, RuntimeValue *> variables;
 };
+
+/**
+ * Fill the environment with some default default values
+ */
+void setupGlobalScope(Environment * env);
