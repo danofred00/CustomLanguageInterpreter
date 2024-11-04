@@ -20,7 +20,9 @@ public:
 		RESERVED_LITERAL,
 		/* Identifier */
 		IDENTIFIER,
+		/* Statement */
 		VAR_DECLARATION,
+		ASSIGNMENT,
 		/* Others */
 		RESERVED,
 		BINARY_EXPR,
@@ -37,7 +39,7 @@ public:
 		return "Statement<>";
 	}
 
-	std::string nodeTypeToString(Statement::NodeType type);
+	static std::string nodeTypeToString(Statement::NodeType type);
 };
 
 
@@ -355,4 +357,31 @@ private:
 	// TODO: const value support
 };
 
+class AssignmentExpression : public Expression
+{
+public: 
+	AssignmentExpression(Expression * left = nullptr, Expression * value = nullptr)
+		: Expression(), left{left}, value{value} {};
+
+	Statement::NodeType getType() override {
+		return NodeType::ASSIGNMENT;
+	}
+
+	Expression * getLeft() const { return left; }
+	void setLeft(Expression * expr) { left = expr; }
+
+	Expression * getValue() const { return value; }
+	void setValue(Expression * expr) { value = expr; }
+
+	std::string toString() {
+		std::stringstream ss {};
+		ss << "AssignmentExpression<\n\tleft=" << left->toString();
+		ss << "\n\tvalue=" << value->toString() << "\n>";
+		return ss.str();
+	}
+
+private:
+	Expression * left;
+	Expression * value;
+};
 

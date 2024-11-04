@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
 	else {
 		while (true) {
 			std::string line;
+			std::cin.clear();
+			std::cout.flush();
 			std::cout << ">>> ";
 			std::getline(std::cin, line);
 			if (line == "exit") {

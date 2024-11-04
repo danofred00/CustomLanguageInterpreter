@@ -117,7 +117,7 @@ public:
     BoolValue(bool value): RuntimeValue(std::any(value)) {};
 
     Type getType() const { 
-        return Type::STRING_LITERAL;
+        return Type::BOOL;
     }
 
     bool getValue() const {

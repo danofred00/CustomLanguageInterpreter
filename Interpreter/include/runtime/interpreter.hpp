@@ -22,4 +22,6 @@ private:
     RuntimeValue * evalReserved(ReservedExpression * reserved, Environment * env);
 
     RuntimeValue * evalVariableDeclaration(VariableDeclaration * varDecl, Environment * env);
+
+    RuntimeValue * evalAssignmentExpression(AssignmentExpression * expr, Environment * env);
 };

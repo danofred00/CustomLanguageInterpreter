@@ -26,6 +26,10 @@ std::string Statement::nodeTypeToString(Statement::NodeType type)
 		return "FUNCTION_DECLARATION";
 	case NodeType::EXPRESSION:
 		return "EXPRESSION";
+	case NodeType::ASSIGNMENT:
+		return "ASSIGNMENT";
+	case NodeType::VAR_DECLARATION:
+		return "VAR_DECLARATION";
 	case NodeType::UNKNOW:
 	default:
 		return "UNKNOW";

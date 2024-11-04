@@ -40,8 +40,7 @@ Statement* Parser::parseStatement()
 
 Expression* Parser::parseExpression()
 {
-	// TODO: parse statament
-	return parseAdditiveExpressions();
+	return parseAssignmentExpression();
 }
 
 Statement * Parser::parseVariableDeclaration() 
@@ -140,6 +139,26 @@ Expression * Parser::parseMultiplicativeExpression()
 		binary->setRight(right);
 		binary->setOperator(op);
 		left = new BinaryExpression(*binary);
+	}
+
+	return left;
+}
+
+Expression * Parser::parseAssignmentExpression()
+{
+	auto left = parseAdditiveExpressions();
+
+	if((*pos).type == TokenType::EQUALS) {
+		consumeToken(); // skip the equals caracter
+		auto value = parseAssignmentExpression();
+		value = new AssignmentExpression(left, value);
+
+		// remove the last semicolon expression
+		if((*pos).type == TokenType::SEMICOLON) {
+			consumeToken();
+		}
+
+		return value;
 	}
 
 	return left;

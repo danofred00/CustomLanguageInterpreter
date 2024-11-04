@@ -53,6 +53,12 @@ private:
 	 */
 	Statement * parseVariableDeclaration();
 
+	/**
+	 * Parse an assignment expression
+	 * Ex: x = 10; x = left = 10; x[1] = 0; etc...
+	 */
+	Expression * parseAssignmentExpression();
+
 	Lexer lexer;
 	TokenList * tokens;
 	TokenList::iterator pos;

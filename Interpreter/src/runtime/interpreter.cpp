@@ -20,7 +20,8 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
             return evalIdentifier(static_cast<Identifier*>(statement), env);
         case Statement::NodeType::PROGRAM:
             return evalProgram(static_cast<ProgramStatement*>(statement), env);
-        
+        case Statement::NodeType::ASSIGNMENT:
+            return evalAssignmentExpression(static_cast<AssignmentExpression *>(statement), env);
         // Handle statements
         case Statement::NodeType::VAR_DECLARATION:
             return evalVariableDeclaration(static_cast<VariableDeclaration*>(statement), env);
@@ -131,6 +132,35 @@ RuntimeValue * Interpreter::evalReserved(ReservedExpression * reserved, Environm
     return env->getVariable(keyword);
 }
 
+RuntimeValue * Interpreter::evalAssignmentExpression(AssignmentExpression * expr, Environment * env)
+{
+    auto left = expr->getLeft();
+    
+    // check 
+    if( left->getType() != Statement::NodeType::IDENTIFIER ) {
+        std::cerr << "AssignmentError: expected an Identifier as left expression, but a " ;
+        std::cerr << Statement::nodeTypeToString(left->getType()) + " is gived." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    auto _left = static_cast<Identifier *>(left);
+    auto leftValue = evaluate(left, env);
+    auto right = evaluate(expr->getValue(), env);
+    
+    // check if types
+    if((leftValue->getType() != right->getType()) && (leftValue->getType() != RuntimeValue::Type::NULL_LITERAL)) {
+        std::cerr << "TypeError: Can not assigne a value of type " + RuntimeValue::typeToString(right->getType());
+        std::cerr << " to " + _left->getIdentifier() << " of type " + RuntimeValue::typeToString(leftValue->getType());
+        std::cerr << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    // assign new value
+    env->setVariable(_left->getIdentifier(), right);
+
+    // return values
+    return right;
+}
 
 /**
  * HELPERS
