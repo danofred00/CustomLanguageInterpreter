@@ -227,14 +227,16 @@ public:
 /**
  * A NULL expression
 */
-class NullLiteral : public Expression
+class NullLiteral : public StringLiteral
 {
 public:
+	NullLiteral(): StringLiteral("null") {};
+	
 	NodeType getType() {
 		return Statement::NodeType::NULL_LITERAL;
 	}
 
 	std::string toString() override {
-		return "NullLiteral<>";
+		return "NullLiteral<value='null'>";
 	}
 };

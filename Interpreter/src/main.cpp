@@ -2,7 +2,7 @@
 //
 #include <iostream>
 #include <fstream>
-#include <parser.hpp>
+#include <runtime/interpreter.hpp>
 #include <utils.hpp>
 
 void usage(const char *name)
@@ -10,9 +10,21 @@ void usage(const char *name)
 	std::cout << "Usage: " << name << " <input file>" << std::endl;
 }
 
+void interprete(std::string & sourceCode) {
+	Parser parser = Parser();
+	Interpreter interpreter = Interpreter();
+
+	auto program = parser.produceAST(sourceCode);
+	auto value = interpreter.evaluate(program);
+
+	std::cout << value->toString() << std::endl;
+	
+	delete value;
+}
+
 int main(int argc, char *argv[])
 {
-	Parser parser = Parser();
+	
 	std::string codeSource{};
 
 	if (argc >= 2)
@@ -24,8 +36,7 @@ int main(int argc, char *argv[])
 			std::exit(EXIT_FAILURE);
 		}
 		codeSource = std::string{ std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>() };
-		auto program = parser.produceAST(codeSource);
-		std::cout << program->toString() << std::endl;
+		interprete(codeSource);
 		input.close();
 	}
 	else {
@@ -36,8 +47,7 @@ int main(int argc, char *argv[])
 			if (line == "exit") {
 				break;
 			}
-			auto program = parser.produceAST(line);
-			std::cout << program->toString() << std::endl;
+			interprete(line);
 		}
 	}
 

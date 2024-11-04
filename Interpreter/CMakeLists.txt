@@ -11,6 +11,7 @@ add_executable (
 	"src/utils.cpp"
 	"src/ast.cpp"
 	"src/parser.cpp"
+	"src/runtime/interpreter.cpp"
 )
 
 target_include_directories(Interpreter PUBLIC "include")
