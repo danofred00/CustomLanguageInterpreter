@@ -41,7 +41,7 @@ Statement* Parser::parseStatement()
 Expression* Parser::parseExpression()
 {
 	// TODO: parse statament
-	return parseMultiplicativeExpression();
+	return parseAdditiveExpressions();
 }
 
 Statement * Parser::parseVariableDeclaration() 
@@ -110,11 +110,11 @@ Expression* Parser::parsePrimaryExpression()
 Expression * Parser::parseAdditiveExpressions()
 {
 	auto binary = new BinaryExpression();
-	Expression* left = parsePrimaryExpression();
+	Expression* left = parseMultiplicativeExpression();
 
 	while((pos->value == "+") || (pos->value == "-")) {
 		auto op = consumeToken().value;
-		auto right = parsePrimaryExpression();
+		auto right = parseMultiplicativeExpression();
 		
 		// update values
 		binary->setLeft(left);
@@ -129,11 +129,11 @@ Expression * Parser::parseAdditiveExpressions()
 Expression * Parser::parseMultiplicativeExpression()
 {
 	auto binary = new BinaryExpression();
-	Expression* left = parseAdditiveExpressions();
+	Expression* left = parsePrimaryExpression();
 
 	while((pos->value == "*") || (pos->value == "/") || (pos->value == "%")) {
 		auto op = consumeToken().value;
-		auto right = parseAdditiveExpressions();
+		auto right = parsePrimaryExpression();
 		
 		// update values
 		binary->setLeft(left);
