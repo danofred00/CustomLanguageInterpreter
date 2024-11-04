@@ -10,6 +10,7 @@ add_executable (
 	"src/lexer.cpp"
 	"src/utils.cpp"
 	"src/ast.cpp"
+	"src/parser.cpp"
 )
 
 target_include_directories(Interpreter PUBLIC "include")

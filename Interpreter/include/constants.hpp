@@ -1,7 +1,5 @@
 #pragma once
 
-#include <regex>
-
 #define REGEX_NUMBER "([0-9]+(\.[0-9]+)?)"
 
 #define REGEX_STRING "('.*')"

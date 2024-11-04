@@ -28,7 +28,7 @@ enum class TokenType
 	OPEN_BRACKET,
 	CLOSE_BRACKET,
 	EQUALS,
-	BINARY_OPERATOR, /* +, -, *, / */
+	BINARY_OPERATOR, /* +, -, *, /, %  */
 
 	/* Value tokens */
 	NUMBER_LITERAL,
@@ -36,6 +36,7 @@ enum class TokenType
 
 	/* Others */
 	END_OF_FILE,	// EOF of the source code
+	UNKNOW,
 };
 
 inline std::string tokenTypeToString(TokenType type)
@@ -62,6 +63,7 @@ inline std::string tokenTypeToString(TokenType type)
 		return "STRING_LITERAL";
 	case TokenType::END_OF_FILE:
 		return "END_OF_FILE";
+	case TokenType::UNKNOW:
 	default:
 		return "UNKNOW";
 	}

@@ -2,10 +2,12 @@
 # visual studio generated files
 .vs
 .vscode
+build
 out
 
 # CMAKE generated files
 CMakeFiles
+CMakeLists.txt.user
 CMakeScripts
 CMakeCache.txt
 CMakeSettings.json

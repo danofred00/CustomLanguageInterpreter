@@ -8,15 +8,16 @@ void Lexer::tokenize(const std::string & input)
 {
 	tokens = std::vector<Token>();
 	auto src = str_split(input, ' ');
-
-	for (auto item : src) {
+	
+	for (auto & item : src) {
+		item = str_trim(item);
 		if (item == "(") {
 			// handle open bracket
 			tokens.push_back(Token(TokenType::OPEN_BRACKET, item));
 		} else if (item == ")") {
 			// handle close bracket
 			tokens.push_back(Token(TokenType::CLOSE_BRACKET, item));
-		} else if ((item == "+") || (item == "-") || (item == "/") || (item == "*")) {
+		} else if ((item == "+") || (item == "-") || (item == "/") || (item == "*") || (item == "%")) {
 			// handle binairies operators
 			tokens.push_back(Token(TokenType::BINARY_OPERATOR, item));
 		} else if (item == "=") {
@@ -42,17 +43,19 @@ void Lexer::tokenize(const std::string & input)
 				// handle string
 				tokens.push_back(Token(TokenType::STRING_LITERAL, item));
 			}
-			else {
+			else if(isSkippable(item)) {
+				// do nothing
+			} else {
 				std::cerr << "Syntax Error: Unexpected Identifier " << item << std::endl;
 				std::exit(EXIT_FAILURE);
 			}
 		}
 	}
-
+	
 	tokens.push_back(Token(TokenType::END_OF_FILE, "EOF"));
 }
 
-TokenList Lexer::getTokens()
+TokenList * Lexer::getTokens()
 {
-	return tokens;
+	return &tokens;
 }

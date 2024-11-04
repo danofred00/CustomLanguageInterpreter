@@ -23,7 +23,7 @@ std::vector<std::string> str_split(const std::string str, char delimitor)
 void showTokenList(const TokenList & tokenList)
 {
 	std::cout << "TokenList {" << std::endl;
-	for (auto token : tokenList) {
+    for (auto & token : tokenList) {
 		std::cout << token << std::endl;
 	}
 	std::cout << "}" << std::endl;
@@ -60,4 +60,8 @@ bool isKeyword(const std::string& str)
 bool isIdentifier(const std::string& str)
 {
 	return str_match(str, REGEX_IDENTIFIER);
+}
+
+bool isSkippable(const std::string & str) {
+	return (str == " ") || (str == "\n") || (str == "\r") || (str == "\t");
 }

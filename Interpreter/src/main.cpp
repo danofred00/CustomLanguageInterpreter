@@ -2,7 +2,7 @@
 //
 #include <iostream>
 #include <fstream>
-#include <lexer.hpp>
+#include <parser.hpp>
 #include <utils.hpp>
 
 void usage(const char *name)
@@ -12,7 +12,7 @@ void usage(const char *name)
 
 int main(int argc, char *argv[])
 {
-	Lexer lexer = Lexer{};
+	Parser parser = Parser();
 	std::string codeSource{};
 
 	if (argc >= 2)
@@ -24,9 +24,8 @@ int main(int argc, char *argv[])
 			std::exit(EXIT_FAILURE);
 		}
 		codeSource = std::string{ std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>() };
-		lexer.tokenize(codeSource);
-		auto tokenList = lexer.getTokens();
-		showTokenList(tokenList);
+		auto program = parser.produceAST(codeSource);
+		std::cout << program->toString() << std::endl;
 		input.close();
 	}
 	else {
@@ -37,9 +36,8 @@ int main(int argc, char *argv[])
 			if (line == "exit") {
 				break;
 			}
-			lexer.tokenize(line);
-			auto tokenList = lexer.getTokens();
-			showTokenList(tokenList);
+			auto program = parser.produceAST(line);
+			std::cout << program->toString() << std::endl;
 		}
 	}
 

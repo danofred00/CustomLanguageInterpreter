@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include <types.hpp>
 
 /*
@@ -23,7 +24,14 @@ public:
 	};
 
 	virtual Statement::NodeType getType() = 0;
+
+	virtual std::string toString() {
+		return "Statement<>";
+	}
+
+	std::string nodeTypeToString(Statement::NodeType type);
 };
+
 
 class ProgramStatement : public Statement
 {
@@ -41,6 +49,8 @@ public:
 
 	void killChildren();
 
+	std::string toString() override;
+
 private:
 	std::vector<Statement *> children;
 };
@@ -51,6 +61,7 @@ private:
 */
 class Expression : public Statement
 {
+public:
 	Statement::NodeType getType() override {
 		return Statement::NodeType::EXPRESSION;
 	}
@@ -59,24 +70,29 @@ class Expression : public Statement
 class BinaryExpression : public Expression
 {
 public:
+	BinaryExpression(): Expression(), left{nullptr}, right{nullptr} {}
+
+	BinaryExpression(Expression * left, Expression * right): Expression(), left{left}, right{right} {}
+
+	~BinaryExpression();
 
 	Statement::NodeType getType() override {
 		return Statement::NodeType::BINARY_EXPR;
 	}
 
-	inline Expression getLeft() const {
+	inline Expression * getLeft() const {
 		return this->left;
 	}
 
-	inline void setLeft(const Expression & expr) {
+	inline void setLeft(Expression * expr) {
 		this->left = expr;
 	}
 
-	inline Expression getRight() const {
+	inline Expression * getRight() const {
 		return this->right;
 	}
 	
-	inline void setRight(const Expression& expr) {
+	inline void setRight(Expression * expr) {
 		this->right = expr;
 	}
 
@@ -88,15 +104,25 @@ public:
 		this->op = op;
 	}
 
+	std::string toString() override;
+
 private: 
-	Expression left;
-	Expression right;
+	Expression * left;
+	Expression * right;
 	Operator op;
 };
 
 
+/**
+ * This expressing represent an identifier
+ */
 class Identifier : public Expression
 {
+public:
+	Identifier(): Expression(), identifier{} {};
+	
+	Identifier(const std::string & str): Expression(), identifier{str} {};
+
 	Statement::NodeType getType() override {
 		return Statement::NodeType::IDENTIFIER;
 	}
@@ -107,6 +133,10 @@ class Identifier : public Expression
 
 	inline std::string getIdentifier() const {
 		return this->identifier;
+	}
+
+	std::string toString() override {
+		return "Identifier<symbol='" + identifier + "'>";
 	}
 
 private:
@@ -125,13 +155,9 @@ public:
 
 	ValueExpression(const T x) : Expression(), value{x} {};
 
-	inline void setValue(const T x) {
-		this->value = x;
-	}
+	inline void setValue(const T x) { this->value = x; }
 
-	inline T getValue() const {
-		return this->value;
-	}
+	inline T getValue() const { return this->value; }
 
 private:
 	T value;
@@ -145,6 +171,7 @@ template<typename T>
 class NumberLiteral : public ValueExpression<T>
 {
 public:
+	NumberLiteral(const T x) : ValueExpression<T>(x) {};
 
 	Statement::NodeType getType() override {
 		return Statement::NodeType::NUMBER_LITERAL;
@@ -155,12 +182,27 @@ public:
 /*
 	An Integer expression
 */
-class IntegerLiteral : public NumberLiteral<int> { };
+class IntegerLiteral : public NumberLiteral<int> 
+{
+	IntegerLiteral(int x) : NumberLiteral<int>(x) {};
+
+	std::string toString() override { 
+		return "IntegerLiteral<value='" + std::to_string(getValue()) + "'>"; 
+	}
+};
 
 /*
 	An Floating expression
 */
-class FloatLiteral : public NumberLiteral<float> { };
+class FloatLiteral : public NumberLiteral<float>
+{ 
+public:
+	FloatLiteral(float x) : NumberLiteral<float>(x) {};
+	
+	std::string toString() override { 
+		return "FloatLiteral<value='" + std::to_string(getValue()) + "'>"; 
+	}
+};
 
 /*
 	An string expression
@@ -168,8 +210,13 @@ class FloatLiteral : public NumberLiteral<float> { };
 class StringLiteral : public ValueExpression<std::string>
 {
 public:
+	StringLiteral(const std::string& str) : ValueExpression(str) {};
+
 	Statement::NodeType getType() override {
 		return Statement::NodeType::STRING_LITERAL;
 	}
-};
 
+	std::string toString() override { 
+		return "StringLiteral<value='" + getValue() + "'>"; 
+	}
+};

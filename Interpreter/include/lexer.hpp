@@ -8,7 +8,7 @@ class Lexer
 public:
 	Lexer();
 	void tokenize(const std::string& input);
-	TokenList getTokens();
+	TokenList * getTokens();
 
 private:
 	TokenList tokens;
