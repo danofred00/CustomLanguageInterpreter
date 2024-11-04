@@ -20,6 +20,7 @@ public:
 		/* Identifier */
 		IDENTIFIER,
 		/* Others */
+		RESERVED,
 		BINARY_EXPR,
 		CALL_EXPR,
 		UNARY_EXPR,
@@ -148,6 +149,30 @@ private:
 	std::string identifier;
 };
 
+class ReservedExpression : public Expression
+{
+public: 
+	ReservedExpression(): Expression(), keyword{} {};
+	ReservedExpression(std::string & keyword): Expression(), keyword{keyword} {};
+
+	Statement::NodeType getType() override {
+		return Statement::NodeType::RESERVED;
+	};
+
+	inline void setKeyword(const std::string & str) {
+		this->keyword = str;
+	}
+	inline std::string getKeyword() const {
+		return this->keyword;
+	}
+
+private:
+	std::string keyword;
+};
+
+
+/* ------------------------------------------------- */
+
 /*
 	This represent a value expression
 */
@@ -259,3 +284,4 @@ public:
 		return "BoolLiteral<value='" + std::to_string(getValue()) + "'>";
 	}
 };
+

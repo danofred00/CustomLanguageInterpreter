@@ -14,6 +14,8 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
             return new BoolValue((static_cast<BoolLiteral*>(statement))->getValue());
         case Statement::NodeType::BINARY_EXPR:
             return evalBinaryExpression(static_cast<BinaryExpression*>(statement), env);
+        case Statement::NodeType::RESERVED:
+            return evalReserved(static_cast<ReservedExpression*>(statement), env);
         case Statement::NodeType::IDENTIFIER:
             return evalIdentifier(static_cast<Identifier*>(statement), env);
         case Statement::NodeType::PROGRAM:
@@ -91,3 +93,15 @@ RuntimeValue * Interpreter::evalIdentifier(Identifier * identifier,  Environment
 
     return value;
 }
+
+RuntimeValue * Interpreter::evalReserved(ReservedExpression * reserved, Environment * env)
+{
+    auto keyword = reserved->getKeyword();
+    // these are the reserved keywords with predefined values
+    if (keyword == "true" || keyword == "false" || keyword == "null") {
+        return env->getVariable(keyword);
+    }
+
+    return new NullValue();
+}
+

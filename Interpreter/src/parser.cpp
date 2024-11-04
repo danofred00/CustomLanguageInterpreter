@@ -57,6 +57,9 @@ Expression* Parser::parsePrimaryExpression()
 		value = parseExpression();
 		expectToken(TokenType::CLOSE_BRACKET, consumeToken().type, "Expected to close bracket inside an expression.");
 		return value;
+	// handle reserved keywords
+	case TokenType::RESERVED:
+		return static_cast<Expression*>(new ReservedExpression(token.value));
 	default:
 		std::cerr << "Syntax Error: Unable to parse Token " << token << std::endl;
 		std::exit(EXIT_FAILURE);

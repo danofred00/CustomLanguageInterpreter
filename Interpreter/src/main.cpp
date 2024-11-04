@@ -10,15 +10,9 @@ void usage(const char *name)
 	std::cout << "Usage: " << name << " <input file>" << std::endl;
 }
 
-void interprete(std::string & sourceCode) {
+void interprete(std::string & sourceCode, Environment * env) {
 	Parser parser = Parser();
-	Environment * env = new Environment();
 	Interpreter interpreter = Interpreter();
-
-	// add some variables in the env
-	env->defineVariable("false", new BoolValue(false));
-	env->defineVariable("true", new BoolValue(true));
-	env->defineVariable("null", new NullValue());
 
 	// parse the source code
 	auto program = parser.produceAST(sourceCode);
@@ -27,13 +21,20 @@ void interprete(std::string & sourceCode) {
 	std::cout << value->toString() << std::endl;
 	
 	delete value;
-	delete env;
 }
 
 int main(int argc, char *argv[])
 {
 	
+	Environment * env = new Environment();
 	std::string codeSource{};
+
+	/**
+	 * Fill the environment with some default values
+	 */
+	env->defineVariable("false", new BoolValue(false));
+	env->defineVariable("true", new BoolValue(true));
+	env->defineVariable("null", new NullValue());
 
 	if (argc >= 2)
 	{
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
 			std::exit(EXIT_FAILURE);
 		}
 		codeSource = std::string{ std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>() };
-		interprete(codeSource);
+		interprete(codeSource, env);
 		input.close();
 	}
 	else {
@@ -55,9 +56,11 @@ int main(int argc, char *argv[])
 			if (line == "exit") {
 				break;
 			}
-			interprete(line);
+			interprete(line, env);
 		}
 	}
+
+	delete env;
 
 	return 0;
 }
