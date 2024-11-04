@@ -56,7 +56,9 @@ int main(int argc, char *argv[])
 			if (line == "exit") {
 				break;
 			}
-			interprete(line, env);
+			if(line != "" || line != " ") {
+				interprete(line, env);
+			}
 		}
 	}
 

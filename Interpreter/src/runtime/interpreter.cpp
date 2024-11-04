@@ -43,6 +43,12 @@ RuntimeValue * Interpreter::evalVariableDeclaration(VariableDeclaration * varDec
     }
 
     RuntimeValue * value = varDecl->getValue() != nullptr ? evaluate(varDecl->getValue(), env) : new NullValue();
+    
+    if(!isCorrectType(value->getType(), type)) {
+        std::cerr << "TypeError: Expected " + VariableDeclaration::valueTypeToString(type) + " but got " + RuntimeValue::typeToString(value->getType()) << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    
     env->defineVariable(identifier, value);
 
     return value;
@@ -125,3 +131,21 @@ RuntimeValue * Interpreter::evalReserved(ReservedExpression * reserved, Environm
     return env->getVariable(keyword);
 }
 
+
+/**
+ * HELPERS
+ */
+bool isCorrectType(RuntimeValue::Type type, VariableDeclaration::ValueType vType)
+{
+    switch (vType)
+    {
+        case VariableDeclaration::ValueType::NUMBER:
+            return type == RuntimeValue::Type::NUMBER_LITERAL || type == RuntimeValue::Type::NULL_LITERAL;
+        case VariableDeclaration::ValueType::STRING:
+            return type == RuntimeValue::Type::STRING_LITERAL || type == RuntimeValue::Type::NULL_LITERAL;
+        case VariableDeclaration::ValueType::BOOLEAN:
+            return type == RuntimeValue::Type::BOOL || type == RuntimeValue::Type::NULL_LITERAL;
+        default:
+            return false;
+    }
+}

@@ -33,6 +33,22 @@ public:
 
     virtual std::string toString() { return ""; }
 
+    static std::string typeToString(Type type) {
+        switch (type)
+        {
+        case Type::NUMBER_LITERAL:
+            return "NUMBER_LITERAL";
+        case Type::STRING_LITERAL:
+            return "STRING_LITERAL";
+        case Type::NULL_LITERAL:
+            return "NULL_LITERAL";
+        case Type::BOOL:
+            return "BOOL";
+        default:
+            return "UNKNOW";
+        }
+    }
+
 private:
     std::any value;
 };
@@ -114,3 +130,4 @@ public:
 };
 
 
+bool isCorrectType(RuntimeValue::Type type, VariableDeclaration::ValueType vType);

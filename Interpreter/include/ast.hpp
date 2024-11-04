@@ -333,6 +333,21 @@ public:
 	}
 
 	std::string toString() override;
+
+	static std::string valueTypeToString(ValueType type) {
+		switch (type)
+		{
+		case ValueType::NUMBER:
+			return "number";
+		case ValueType::STRING:
+			return "string";
+		case ValueType::BOOLEAN:
+			return "boolean";
+		default:
+			return "unknow";
+		}
+	}
+
 private:
 	std::string identifier;
 	Expression * value;
