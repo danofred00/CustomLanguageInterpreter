@@ -12,14 +12,20 @@ void usage(const char *name)
 
 void interprete(std::string & sourceCode) {
 	Parser parser = Parser();
+	Environment * env = new Environment();
 	Interpreter interpreter = Interpreter();
 
+	// add some variables in the env
+	env->defineVariable("a", new NumberValue(10));
+
+	// parse the source code
 	auto program = parser.produceAST(sourceCode);
-	auto value = interpreter.evaluate(program);
+	auto value = interpreter.evaluate(program, env);
 
 	std::cout << value->toString() << std::endl;
 	
 	delete value;
+	delete env;
 }
 
 int main(int argc, char *argv[])

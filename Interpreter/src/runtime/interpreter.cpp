@@ -1,6 +1,6 @@
 #include <runtime/interpreter.hpp>
 
-RuntimeValue * Interpreter::evaluate(Statement * statement)
+RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
 {
     auto type = statement->getType();
     
@@ -9,31 +9,33 @@ RuntimeValue * Interpreter::evaluate(Statement * statement)
         case Statement::NodeType::NUMBER_LITERAL:
             return new NumberValue((static_cast<FloatLiteral*>(statement))->getValue());
         case Statement::NodeType::BINARY_EXPR:
-            return evalBinaryExpression(static_cast<BinaryExpression*>(statement));
+            return evalBinaryExpression(static_cast<BinaryExpression*>(statement), env);
+        case Statement::NodeType::IDENTIFIER:
+            return evalIdentifier(static_cast<Identifier*>(statement), env);
         case Statement::NodeType::PROGRAM:
-            return evalProgram(static_cast<ProgramStatement*>(statement));
+            return evalProgram(static_cast<ProgramStatement*>(statement), env);
         case Statement::NodeType::NULL_LITERAL:
         default:
             return new NullValue();
     }
 }
 
-RuntimeValue * Interpreter::evalProgram(ProgramStatement * program)
+RuntimeValue * Interpreter::evalProgram(ProgramStatement * program,  Environment * env)
 {
     RuntimeValue * lastEvaluated = new NullValue();
 
     for(auto stmt : program->getBody()) {
         delete lastEvaluated;
-        lastEvaluated = evaluate(stmt);
+        lastEvaluated = evaluate(stmt, env);
     }
 
     return lastEvaluated;
 }
 
-RuntimeValue * Interpreter::evalBinaryExpression(BinaryExpression * binary)
+RuntimeValue * Interpreter::evalBinaryExpression(BinaryExpression * binary,  Environment * env)
 {
-    auto left = evaluate(binary->getLeft());
-    auto right = evaluate(binary->getRight());
+    auto left = evaluate(binary->getLeft(), env);
+    auto right = evaluate(binary->getRight(), env);
     auto op = binary->getOperator();
 
     if(left->getType() == RuntimeValue::Type::NUMBER_LITERAL && right->getType() == RuntimeValue::Type::NUMBER_LITERAL) {
@@ -71,4 +73,17 @@ RuntimeValue * Interpreter::evalNumericExpression(NumberValue * left, NumberValu
     }
     
     return result == nullptr ? new NullValue() : result;
+}
+
+RuntimeValue * Interpreter::evalIdentifier(Identifier * identifier,  Environment * env)
+{
+    auto name = identifier->getIdentifier();
+    auto value = env->getVariable(name);
+
+    if(value == nullptr) {
+        std::cerr << "Runtime Error: Undefined variable " + name << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    return value;
 }
