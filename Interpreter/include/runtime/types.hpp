@@ -12,6 +12,7 @@ public:
         NUMBER_LITERAL = Statement::NodeType::NUMBER_LITERAL,
         STRING_LITERAL = Statement::NodeType::STRING_LITERAL,
         NULL_LITERAL = Statement::NodeType::NULL_LITERAL,
+        BOOL = Statement::NodeType::BOOL,
     };
 
     RuntimeValue(): value{} {}
@@ -73,5 +74,43 @@ public:
 };
 
 /**
- * TODO: handle String runtime value
+ * String runtime value
  */
+class StringValue : public RuntimeValue
+{
+public: 
+    StringValue(std::string value): RuntimeValue(std::any(value)) {};
+
+    Type getType() const { 
+        return Type::STRING_LITERAL;
+    }
+
+    std::string getValue() const {
+        return std::any_cast<std::string>(RuntimeValue::getValue());
+    }
+
+    std::string toString() override {
+        return getValue();
+    }
+};
+
+
+class BoolValue : public RuntimeValue
+{
+public: 
+    BoolValue(bool value): RuntimeValue(std::any(value)) {};
+
+    Type getType() const { 
+        return Type::STRING_LITERAL;
+    }
+
+    bool getValue() const {
+        return std::any_cast<bool>(RuntimeValue::getValue());
+    }
+
+    std::string toString() override {
+        return getValue() ? "true" : "false";
+    }
+};
+
+

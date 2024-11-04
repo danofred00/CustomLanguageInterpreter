@@ -16,7 +16,9 @@ void interprete(std::string & sourceCode) {
 	Interpreter interpreter = Interpreter();
 
 	// add some variables in the env
-	env->defineVariable("a", new NumberValue(10));
+	env->defineVariable("false", new BoolValue(false));
+	env->defineVariable("true", new BoolValue(true));
+	env->defineVariable("null", new NullValue());
 
 	// parse the source code
 	auto program = parser.produceAST(sourceCode);

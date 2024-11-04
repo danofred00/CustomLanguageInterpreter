@@ -8,6 +8,10 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
     {
         case Statement::NodeType::NUMBER_LITERAL:
             return new NumberValue((static_cast<FloatLiteral*>(statement))->getValue());
+        case Statement::NodeType::STRING_LITERAL:
+            return new StringValue((static_cast<StringLiteral*>(statement))->getValue());
+        case Statement::NodeType::BOOL:
+            return new BoolValue((static_cast<BoolLiteral*>(statement))->getValue());
         case Statement::NodeType::BINARY_EXPR:
             return evalBinaryExpression(static_cast<BinaryExpression*>(statement), env);
         case Statement::NodeType::IDENTIFIER:

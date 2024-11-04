@@ -16,6 +16,7 @@ public:
 		NUMBER_LITERAL,
 		STRING_LITERAL,
 		NULL_LITERAL,
+		BOOL,
 		/* Identifier */
 		IDENTIFIER,
 		/* Others */
@@ -239,5 +240,22 @@ public:
 
 	std::string toString() override {
 		return "NullLiteral<value='null'>";
+	}
+};
+
+/**
+ * A boolean expression
+*/
+class BoolLiteral : public ValueExpression<bool>
+{
+public:
+	BoolLiteral(bool x) : ValueExpression(x) {};
+
+	NodeType getType() {
+		return Statement::NodeType::BOOL;
+	}
+
+	std::string toString() override {
+		return "BoolLiteral<value='" + std::to_string(getValue()) + "'>";
 	}
 };
