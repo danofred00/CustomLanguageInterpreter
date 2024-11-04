@@ -21,7 +21,10 @@ enum class TokenType
 {
 	/* declaration tokens */
 	IDENTIFIER,
-	RESERVED,
+	RESERVED, // To remove later
+
+	/* Reserved keywords */
+	VAR_DECLARATION,
 	
 	/* container tokens */
 	SEMICOLON,
@@ -33,7 +36,7 @@ enum class TokenType
 	/* Value tokens */
 	NUMBER_LITERAL,
 	STRING_LITERAL,
-	NULL_LITERAL,
+	RESERVED_LITERAL,
 
 	/* Others */
 	END_OF_FILE,	// EOF of the source code
@@ -46,8 +49,8 @@ inline std::string tokenTypeToString(TokenType type)
 	{
 	case TokenType::IDENTIFIER:
 		return "IDENTIFIER";
-	case TokenType::RESERVED:
-		return "RESERVED";
+	case TokenType::VAR_DECLARATION:
+		return "VAR_DECLARATION";
 	case TokenType::SEMICOLON:
 		return "SEMICOLON";
 	case TokenType::OPEN_BRACKET:
@@ -62,6 +65,8 @@ inline std::string tokenTypeToString(TokenType type)
 		return "NUMBER_LITTERAL";
 	case TokenType::STRING_LITERAL:
 		return "STRING_LITERAL";
+	case TokenType::RESERVED_LITERAL:
+		return "RESERVED_LITERAL";
 	case TokenType::END_OF_FILE:
 		return "END_OF_FILE";
 	case TokenType::UNKNOW:

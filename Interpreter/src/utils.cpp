@@ -57,6 +57,16 @@ bool isKeyword(const std::string& str)
 	return false;
 }
 
+bool isKeywordLiteral(const std::string& str)
+{
+	return std::find(std::begin(keywordsLitterals), std::end(keywordsLitterals), str) != std::end(keywordsLitterals);
+}
+
+bool isVariableDeclarationKeyword(const std::string& str)
+{
+	return std::find(std::begin(variablesKeywords), std::end(variablesKeywords), str) != std::end(variablesKeywords);
+}
+
 bool isIdentifier(const std::string& str)
 {
 	return str_match(str, REGEX_IDENTIFIER);

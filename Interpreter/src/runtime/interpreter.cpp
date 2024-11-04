@@ -14,17 +14,44 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
             return new BoolValue((static_cast<BoolLiteral*>(statement))->getValue());
         case Statement::NodeType::BINARY_EXPR:
             return evalBinaryExpression(static_cast<BinaryExpression*>(statement), env);
-        case Statement::NodeType::RESERVED:
+        case Statement::NodeType::RESERVED_LITERAL:
             return evalReserved(static_cast<ReservedExpression*>(statement), env);
         case Statement::NodeType::IDENTIFIER:
             return evalIdentifier(static_cast<Identifier*>(statement), env);
         case Statement::NodeType::PROGRAM:
             return evalProgram(static_cast<ProgramStatement*>(statement), env);
-        case Statement::NodeType::NULL_LITERAL:
+        
+        // Handle statements
+        case Statement::NodeType::VAR_DECLARATION:
+            return evalVariableDeclaration(static_cast<VariableDeclaration*>(statement), env);
         default:
             return new NullValue();
     }
 }
+
+/**
+ * EVALUATES STATEMENTS
+ */
+RuntimeValue * Interpreter::evalVariableDeclaration(VariableDeclaration * varDecl, Environment * env)
+{
+    auto identifier = varDecl->getIdentifier();
+    auto type = varDecl->getValueType();
+    // check if the variable is already defined
+    if(env->exists(identifier)) {
+        std::cerr << "Runtime Error: Variable " + identifier + " is already defined." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    RuntimeValue * value = varDecl->getValue() != nullptr ? evaluate(varDecl->getValue(), env) : new NullValue();
+    env->defineVariable(identifier, value);
+
+    return value;
+}
+
+
+/**
+ * EVALUATES EXPRESSIONS
+ */
 
 RuntimeValue * Interpreter::evalProgram(ProgramStatement * program,  Environment * env)
 {
@@ -84,24 +111,17 @@ RuntimeValue * Interpreter::evalNumericExpression(NumberValue * left, NumberValu
 RuntimeValue * Interpreter::evalIdentifier(Identifier * identifier,  Environment * env)
 {
     auto name = identifier->getIdentifier();
-    auto value = env->getVariable(name);
-
-    if(value == nullptr) {
-        std::cerr << "Runtime Error: Undefined variable " + name << std::endl;
-        std::exit(EXIT_FAILURE);
+    if(env->exists(name)) {
+        return env->getVariable(name);
     }
 
-    return value;
+    std::cerr << "Runtime Error: Undefined variable " + name << std::endl;
+    std::exit(EXIT_FAILURE);
 }
 
 RuntimeValue * Interpreter::evalReserved(ReservedExpression * reserved, Environment * env)
 {
     auto keyword = reserved->getKeyword();
-    // these are the reserved keywords with predefined values
-    if (keyword == "true" || keyword == "false" || keyword == "null") {
-        return env->getVariable(keyword);
-    }
-
-    return new NullValue();
+    return env->getVariable(keyword);
 }
 

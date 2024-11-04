@@ -47,6 +47,10 @@ bool isAlpha(const std::string& str);
 
 bool isKeyword(const std::string& str);
 
+bool isKeywordLiteral(const std::string& str);
+
+bool isVariableDeclarationKeyword(const std::string& str);
+
 bool isIdentifier(const std::string& str);
 
 bool isSkippable(const std::string & str);

@@ -48,6 +48,11 @@ private:
 	 */
 	Expression * parseMultiplicativeExpression();
 
+	/**
+	 * Parse a variable declaration
+	 */
+	Statement * parseVariableDeclaration();
+
 	Lexer lexer;
 	TokenList * tokens;
 	TokenList::iterator pos;

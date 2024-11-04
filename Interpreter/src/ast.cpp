@@ -67,6 +67,21 @@ std::string ProgramStatement::toString()
 	return ss.str();
 }
 
+/**
+ * VARIABLE DECLARATION
+ */
+VariableDeclaration::~VariableDeclaration() {
+	delete value;
+}
+
+std::string VariableDeclaration::toString()
+{
+	std::stringstream ss {};
+	ss << "VariableDeclaration<identifier='" << identifier;
+	ss << "' value='" << ((value == nullptr) ? "null" : value->toString()) << "'>";
+	return ss.str();
+}
+
 
 /**
  * BINARY EXPRESSION

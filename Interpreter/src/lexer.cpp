@@ -33,8 +33,10 @@ void Lexer::tokenize(const std::string & input)
 			}
 			else if (isKeyword(item)) {
 				// handle keywords
-				if (item == "null") {
-					tokens.push_back(Token(TokenType::NULL_LITERAL, item));
+				if (isKeywordLiteral(item)) {
+					tokens.push_back(Token(TokenType::RESERVED_LITERAL, item));
+				} else if (isVariableDeclarationKeyword(item)) {
+					tokens.push_back(Token(TokenType::VAR_DECLARATION, item));
 				} else { 
 					tokens.push_back(Token(TokenType::RESERVED, item));
 				}

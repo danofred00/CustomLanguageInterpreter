@@ -20,4 +20,6 @@ private:
     RuntimeValue* evalIdentifier(Identifier * identifier,  Environment * env);
 
     RuntimeValue * evalReserved(ReservedExpression * reserved, Environment * env);
+
+    RuntimeValue * evalVariableDeclaration(VariableDeclaration * varDecl, Environment * env);
 };

@@ -17,8 +17,10 @@ public:
 		STRING_LITERAL,
 		NULL_LITERAL,
 		BOOL,
+		RESERVED_LITERAL,
 		/* Identifier */
 		IDENTIFIER,
+		VAR_DECLARATION,
 		/* Others */
 		RESERVED,
 		BINARY_EXPR,
@@ -60,7 +62,6 @@ public:
 private:
 	std::vector<Statement *> children;
 };
-
 
 /*
 	This is a representation of an expression
@@ -148,28 +149,6 @@ public:
 private:
 	std::string identifier;
 };
-
-class ReservedExpression : public Expression
-{
-public: 
-	ReservedExpression(): Expression(), keyword{} {};
-	ReservedExpression(std::string & keyword): Expression(), keyword{keyword} {};
-
-	Statement::NodeType getType() override {
-		return Statement::NodeType::RESERVED;
-	};
-
-	inline void setKeyword(const std::string & str) {
-		this->keyword = str;
-	}
-	inline std::string getKeyword() const {
-		return this->keyword;
-	}
-
-private:
-	std::string keyword;
-};
-
 
 /* ------------------------------------------------- */
 
@@ -284,4 +263,81 @@ public:
 		return "BoolLiteral<value='" + std::to_string(getValue()) + "'>";
 	}
 };
+
+class ReservedExpression : public Expression
+{
+public: 
+	ReservedExpression(): Expression(), keyword{} {};
+	ReservedExpression(std::string & keyword): Expression(), keyword{keyword} {};
+
+	Statement::NodeType getType() override {
+		return Statement::NodeType::RESERVED_LITERAL;
+	};
+
+	inline void setKeyword(const std::string & str) {
+		this->keyword = str;
+	}
+	
+	inline std::string getKeyword() const {
+		return this->keyword;
+	}
+
+private:
+	std::string keyword;
+};
+
+
+/* Some Statements */
+
+class VariableDeclaration : public Statement
+{
+public: 
+	enum class ValueType {
+		NUMBER,
+		STRING,
+		BOOLEAN,
+		// TODO: add more types
+	};
+	VariableDeclaration(): Statement(), identifier{}, value{nullptr}, type{ValueType::NUMBER} {};
+
+	VariableDeclaration(const std::string & identifier, ValueType type, Expression * value): Statement(), identifier{identifier}, type{type}, value{value} {};
+
+	~VariableDeclaration();
+
+	Statement::NodeType getType() override {
+		return Statement::NodeType::VAR_DECLARATION;
+	}
+
+	inline void setIdentifier(const std::string & str) {
+		this->identifier = str;
+	}
+
+	inline std::string getIdentifier() const {
+		return this->identifier;
+	}
+
+	inline void setValue(Expression * stmt) {
+		this->value = stmt;
+	}
+
+	inline Expression * getValue() const {
+		return this->value;
+	}
+
+	inline void setValueType(ValueType type) {
+		this->type = type;
+	}
+
+	inline ValueType getValueType() const {
+		return this->type;
+	}
+
+	std::string toString() override;
+private:
+	std::string identifier;
+	Expression * value;
+	ValueType type;
+	// TODO: const value support
+};
+
 

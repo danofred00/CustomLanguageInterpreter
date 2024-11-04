@@ -27,13 +27,57 @@ ProgramStatement * Parser::produceAST(const std::string& sourceCode)
 
 Statement* Parser::parseStatement()
 {
-	return parseExpression();
+	auto current = *pos;
+
+	switch (current.type)
+	{
+		case TokenType::VAR_DECLARATION:
+			return parseVariableDeclaration();
+		default:
+			return parseExpression();
+	}
 }
 
 Expression* Parser::parseExpression()
 {
 	// TODO: parse statament
 	return parseMultiplicativeExpression();
+}
+
+Statement * Parser::parseVariableDeclaration() 
+{
+	auto token = consumeToken();
+	VariableDeclaration::ValueType type = VariableDeclaration::ValueType::NUMBER;
+	std::string identifier {};
+	if(token.value == "string") {
+		type = VariableDeclaration::ValueType::STRING;
+	} else if(token.value == "bool") {
+		type = VariableDeclaration::ValueType::BOOLEAN;
+	} else {
+		// nothing to do, because we knows that the token is a var declaration
+	}
+	// ensure that the next token is an identifier
+	token = consumeToken();
+	expectToken(TokenType::IDENTIFIER, token.type, std::string("Expected an identifier after a variable declaration.").c_str());
+	identifier = token.value;
+
+	token = consumeToken();
+	// handle if its a semicolon
+	if(token.type == TokenType::SEMICOLON) {
+		// TODO: handle constant declaration
+		return new VariableDeclaration(identifier, type, nullptr);
+	}
+
+	// ensure that the next token is an equal sign
+	expectToken(TokenType::EQUALS, token.type, "Expected an equal sign or semicolon after an identifier in a variable declaration.");
+
+	// evaluate the assigned expression
+	auto value = parseExpression();
+
+	// ensure that the next token is a semicolon
+	expectToken(TokenType::SEMICOLON, consumeToken().type, "Expected a semicolon after an expression in a variable declaration.");
+
+	return new VariableDeclaration(identifier, type, value);
 }
 
 Expression* Parser::parsePrimaryExpression()
@@ -51,14 +95,11 @@ Expression* Parser::parsePrimaryExpression()
 		return static_cast<Expression*>(new FloatLiteral(static_cast<float>(std::atof(token.value.c_str()))));
 	case TokenType::STRING_LITERAL:
 		return static_cast<Expression*>(new StringLiteral(token.value));
-	case TokenType::NULL_LITERAL:
-		return static_cast<Expression*>(new NullLiteral());
 	case TokenType::OPEN_BRACKET:
 		value = parseExpression();
 		expectToken(TokenType::CLOSE_BRACKET, consumeToken().type, "Expected to close bracket inside an expression.");
 		return value;
-	// handle reserved keywords
-	case TokenType::RESERVED:
+	case TokenType::RESERVED_LITERAL:
 		return static_cast<Expression*>(new ReservedExpression(token.value));
 	default:
 		std::cerr << "Syntax Error: Unable to parse Token " << token << std::endl;

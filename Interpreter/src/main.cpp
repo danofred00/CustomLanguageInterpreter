@@ -20,7 +20,7 @@ void interprete(std::string & sourceCode, Environment * env) {
 
 	std::cout << value->toString() << std::endl;
 	
-	delete value;
+	// delete value;
 }
 
 int main(int argc, char *argv[])
