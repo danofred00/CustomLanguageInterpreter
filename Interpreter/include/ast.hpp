@@ -12,8 +12,11 @@ class Statement
 public: 
 	enum class NodeType {
 		PROGRAM,
+		/* Values */
 		NUMBER_LITERAL,
 		STRING_LITERAL,
+		NULL_LITERAL,
+		/* Identifier */
 		IDENTIFIER,
 		BINARY_EXPR,
 		CALL_EXPR,
@@ -218,5 +221,20 @@ public:
 
 	std::string toString() override { 
 		return "StringLiteral<value='" + getValue() + "'>"; 
+	}
+};
+
+/**
+ * A NULL expression
+*/
+class NullLiteral : public Expression
+{
+public:
+	NodeType getType() {
+		return Statement::NodeType::NULL_LITERAL;
+	}
+
+	std::string toString() override {
+		return "NullLiteral<>";
 	}
 };

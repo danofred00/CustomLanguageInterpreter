@@ -51,6 +51,8 @@ Expression* Parser::parsePrimaryExpression()
 		return static_cast<Expression*>(new FloatLiteral(static_cast<float>(std::atof(token.value.c_str()))));
 	case TokenType::STRING_LITERAL:
 		return static_cast<Expression*>(new StringLiteral(token.value));
+	case TokenType::NULL_LITERAL:
+		return static_cast<Expression*>(new NullLiteral());
 	case TokenType::OPEN_BRACKET:
 		value = parseExpression();
 		expectToken(TokenType::CLOSE_BRACKET, consumeToken().type, "Expected to close bracket inside an expression.");

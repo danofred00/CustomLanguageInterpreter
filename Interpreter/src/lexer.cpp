@@ -33,7 +33,11 @@ void Lexer::tokenize(const std::string & input)
 			}
 			else if (isKeyword(item)) {
 				// handle keywords
-				tokens.push_back(Token(TokenType::RESERVED, item));
+				if (item == "null") {
+					tokens.push_back(Token(TokenType::NULL_LITERAL, item));
+				} else { 
+					tokens.push_back(Token(TokenType::RESERVED, item));
+				}
 			}
 			else if(isIdentifier(item)) {
 				// handle identifier

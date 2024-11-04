@@ -33,6 +33,7 @@ enum class TokenType
 	/* Value tokens */
 	NUMBER_LITERAL,
 	STRING_LITERAL,
+	NULL_LITERAL,
 
 	/* Others */
 	END_OF_FILE,	// EOF of the source code

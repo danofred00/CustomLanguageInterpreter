@@ -6,7 +6,9 @@
 
 const std::vector<std::string> keywords = {
 	/* var types */
-	"number", "string",
+	"number", "string", 
+	/* null type|value */
+	"null",
 	/* conditional expressions */
 	"if", "else",
 	 /* loops */
