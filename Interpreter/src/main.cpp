@@ -38,7 +38,6 @@ void reply(Parser * parser, Interpreter * interpreter, Environment * env)
 	}
 }
 
-
 void run(const std::string & path, Parser * parser, Interpreter * interpreter, Environment * env) {
 	if(!std::filesystem::is_regular_file(path)) {
 		throw std::runtime_error("Unable to retrieve the source file. File is not exists.");

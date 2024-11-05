@@ -73,5 +73,5 @@ bool isIdentifier(const std::string& str)
 }
 
 bool isSkippable(const std::string & str) {
-	return (str == " ") || (str == "\n") || (str == "\r") || (str == "\t");
+	return std::isspace(str[0]);
 }

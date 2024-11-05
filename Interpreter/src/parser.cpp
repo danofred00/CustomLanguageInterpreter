@@ -83,7 +83,7 @@ Expression* Parser::parsePrimaryExpression()
 {
 	auto token = consumeToken();
 	Expression * value = nullptr;
-
+	
 	switch (token.type)
 	{
 	// handle itentifiers

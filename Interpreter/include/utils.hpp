@@ -39,6 +39,14 @@ void showTokenList(const TokenList& tokenList);
 
 /* LEXER helpers */
 
+/**
+ * Char To String function
+ */
+inline std::string atos(char c) {
+	std::string s = { c };
+	return s;
+}
+
 bool str_match(const std::string& str, const std::string& pattern);
 
 bool isNumeric(const std::string& str);
