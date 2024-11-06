@@ -71,6 +71,19 @@ private:
 	 */
 	Expression * parseCallExpression(Expression *caller);
 
+	/**
+	 * Parse a conditional expression
+	 * Ex: if(cond) { do } else { do_else }
+	 * Ex: x = if(condition) { if_value } else { else_value }
+	 */
+	Expression * parseConditionalExpression();
+
+	/**
+	 * Parse the block statement
+	 * Ex: { statements }
+	 */
+	Statement * parseBlockStatement();
+
 	Lexer lexer;
 	TokenList * tokens;
 	TokenList::iterator pos;

@@ -31,3 +31,9 @@ const std::vector<std::string> variablesKeywords = {
 	"number",
 	"string"
 };
+
+const std::vector<std::string> conditionalKeywords = {
+	"if",
+	"else"
+};
+

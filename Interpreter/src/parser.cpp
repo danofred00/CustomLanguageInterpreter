@@ -83,7 +83,7 @@ Expression* Parser::parsePrimaryExpression()
 {
 	auto token = consumeToken();
 	Expression * value = nullptr;
-	
+
 	switch (token.type)
 	{
 	// handle itentifiers
@@ -94,12 +94,14 @@ Expression* Parser::parsePrimaryExpression()
 		return static_cast<Expression*>(new FloatLiteral(static_cast<float>(std::atof(token.value.c_str()))));
 	case TokenType::STRING_LITERAL:
 		return static_cast<Expression*>(new StringLiteral(token.value));
-	case TokenType::OPEN_BRACKET:
+	case TokenType::OPEN_PAREN:
 		value = parseExpression();
-		expectToken(TokenType::CLOSE_BRACKET, consumeToken().type, "Expected to close bracket inside an expression.");
+		expectToken(TokenType::CLOSE_PAREN, consumeToken().type, "Expected to close bracket inside an expression.");
 		return value;
 	case TokenType::RESERVED_LITERAL:
 		return static_cast<Expression*>(new ReservedExpression(token.value));
+	case TokenType::CONDITION_IF:
+		return parseConditionalExpression();
 	default:
 		std::cerr << "Syntax Error: Unable to parse Token " << token << std::endl;
 		std::exit(EXIT_FAILURE);
@@ -169,7 +171,7 @@ Expression * Parser::parseAssignmentExpression()
 Expression * Parser::parseCallExpression(Expression *caller)
 {
 	// expect the caller is an identier
-	if(caller->getType() != Statement::NodeType::IDENTIFIER) {
+	if(caller->getType() != NodeType::IDENTIFIER) {
 		std::cerr << "Syntax Error: Expected an identifier as a caller in a function call." << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
@@ -178,7 +180,7 @@ Expression * Parser::parseCallExpression(Expression *caller)
 	std::vector<Expression *> args {};
 
 	// parse arguments
-	while((*pos).type != TokenType::CLOSE_BRACKET) {
+	while((*pos).type != TokenType::CLOSE_PAREN) {
 		auto arg = parseExpression();
 		args.push_back(arg);
 		
@@ -189,7 +191,7 @@ Expression * Parser::parseCallExpression(Expression *caller)
 	}
 
 	// expect the next should be a close bracket
-	expectToken(TokenType::CLOSE_BRACKET, (*pos).type, "Expected a close bracket after a function call.");
+	expectToken(TokenType::CLOSE_PAREN, (*pos).type, "Expected a close parenthese after a function call.");
 
 	consumeToken(); // skip the close bracket
 
@@ -200,11 +202,64 @@ Expression * Parser::parseFunctionCallExpression()
 {
 	Expression * left = parseAdditiveExpressions();
 
-	if((*pos).type == TokenType::OPEN_BRACKET) {
+	if((*pos).type == TokenType::OPEN_PAREN) {
 		return parseCallExpression(left);
 	}
 
 	return left;
+}
+
+Expression * Parser::parseConditionalExpression()
+{
+	Expression * condition = nullptr;
+	Statement * thenBlock = nullptr;
+	Statement * elseBlock = nullptr;
+
+	// expect the next is an open_paren token
+	expectToken(TokenType::OPEN_PAREN, (*pos).type, "Expect '(' after if conditional statement");
+	consumeToken(); // read the open paren
+
+	// read condition
+	condition = parseAssignmentExpression();
+	// expect close parent after conditional
+	expectToken(TokenType::CLOSE_PAREN, (*pos).type, "Expect ')' inside if conditional statement");
+	consumeToken(); // read the close paren
+
+	// read the thenBlock
+	thenBlock = parseBlockStatement();
+
+	// check if there is an else statement, if true, just run it
+	if((*pos).type == TokenType::CONDITION_ELSE) {
+		consumeToken(); // read the else token
+		// check if is another if conditionnal
+		if((*pos).type == TokenType::CONDITION_IF) {
+			elseBlock = parsePrimaryExpression();
+		} else {
+			elseBlock = parseBlockStatement();
+		}
+	}
+
+	return new ConditionalExpression(condition, thenBlock, elseBlock);
+}
+
+Statement * Parser::parseBlockStatement()
+{
+	BlocStatement * block = new BlocStatement();
+	
+	expectToken(TokenType::OPEN_BRACKET, (*pos).type, "Expect open bracket '{' before another block statement");
+	consumeToken(); // read the open bracket
+	
+	// read the body
+	while (!isEOF() && (*pos).type != TokenType::CLOSE_BRACKET)
+	{
+		block->addChild(parseStatement());
+	}
+	
+	// expect close paren and open_bracket
+	expectToken(TokenType::CLOSE_BRACKET, (*pos).type, "Expect close bracket '}' after block statement");
+	consumeToken(); // read the close bracket
+	
+	return static_cast<Statement *>(block);
 }
 
 bool Parser::isEOF()

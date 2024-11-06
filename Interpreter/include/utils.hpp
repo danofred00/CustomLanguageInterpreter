@@ -46,3 +46,8 @@ bool isSkippable(const std::string & str);
  * Check if string is a simple quote or a double quote
  */
 bool isStringDeclarator(const std::string & str);
+
+/**
+ * Check conditional keyword
+ */
+bool isConditionalKeyword(const std::string & str);

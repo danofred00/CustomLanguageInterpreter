@@ -26,4 +26,8 @@ private:
     RuntimeValue * evalAssignmentExpression(AssignmentExpression * expr, Environment * env);
 
     RuntimeValue * evalFunctionCallExpression(CallFunctionExpression * expr, Environment * env);
+
+    RuntimeValue * evalConditionalExpression(ConditionalExpression * expr, Environment * env );
+
+    RuntimeValue * executeIsolatedBloc(Statement * statement, Environment * parent);
 };

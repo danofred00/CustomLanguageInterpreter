@@ -78,3 +78,8 @@ bool isSkippable(const std::string & str) {
 bool isStringDeclarator(const std::string & str) {
 	return (str == "'") || (str == "\"");
 }
+
+bool isConditionalKeyword(const std::string & str) {
+	return std::find(std::begin(conditionalKeywords), std::end(conditionalKeywords), str) != std::end(conditionalKeywords);
+}
+

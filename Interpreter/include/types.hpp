@@ -28,8 +28,10 @@ enum class TokenType
 	
 	/* container tokens */
 	SEMICOLON,	// ;
-	OPEN_BRACKET, // (
-	CLOSE_BRACKET, // )
+	OPEN_PAREN, // (
+	CLOSE_PAREN, // )
+	OPEN_BRACKET, // {
+	CLOSE_BRACKET, // }
 	EQUALS, // =
 	BINARY_OPERATOR, /* +, -, *, /, %  */
 	COMMA, // ,
@@ -38,6 +40,10 @@ enum class TokenType
 	NUMBER_LITERAL,
 	STRING_LITERAL,
 	RESERVED_LITERAL,
+
+	/* Conditional expression */
+	CONDITION_IF,
+	CONDITION_ELSE,
 
 	/* Others */
 	END_OF_FILE,	// EOF of the source code
@@ -72,6 +78,14 @@ inline std::string tokenTypeToString(TokenType type)
 		return "RESERVED_LITERAL";
 	case TokenType::END_OF_FILE:
 		return "END_OF_FILE";
+	case TokenType::CONDITION_IF:
+		return "CONDITION_IF";
+	case TokenType::CONDITION_ELSE:
+		return "CONDITION_ELSE";
+	case TokenType::OPEN_PAREN:
+		return "OPEN_PAREN";
+	case TokenType::CLOSE_PAREN:
+		return "CLOSE_PAREN";
 	case TokenType::UNKNOW:
 	default:
 		return "UNKNOW";

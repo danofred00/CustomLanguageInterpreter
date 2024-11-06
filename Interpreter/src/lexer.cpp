@@ -15,11 +15,17 @@ void Lexer::tokenize(const std::string & input)
 	while (begin != end) {
 		std::string item = atos(*begin);
 		if (item == "(") {
-			// handle open bracket
-			tokens.push_back(Token(TokenType::OPEN_BRACKET, atos(*(begin++))));
+			// handle open paren
+			tokens.push_back(Token(TokenType::OPEN_PAREN, atos(*(begin++))));
 		} else if (item == ")") {
-			// handle close bracket
-			tokens.push_back(Token(TokenType::CLOSE_BRACKET, atos(*(begin++))));
+			// handle close paren
+			tokens.push_back(Token(TokenType::CLOSE_PAREN, atos(*(begin++))));
+		} else if (item == "{") {
+			// handle open paren
+			tokens.push_back(Token(TokenType::OPEN_BRACKET, atos(*(begin++))));
+		} else if (item == "}") {
+			// handle close paren
+			tokens.push_back(Token(TokenType::CLOSE_BRACKET, atos(*(begin++))));	
 		} else if ((item == "+") || (item == "-") || (item == "/") || (item == "*") || (item == "%")) {
 			// handle binairies operators
 			tokens.push_back(Token(TokenType::BINARY_OPERATOR, atos(*(begin++))));
@@ -59,6 +65,10 @@ void Lexer::tokenize(const std::string & input)
 						tokens.push_back(Token(TokenType::RESERVED_LITERAL, ident));
 					} else if (isVariableDeclarationKeyword(ident)) {
 						tokens.push_back(Token(TokenType::VAR_DECLARATION, ident));
+					} else if(isConditionalKeyword(ident)) {
+						// get the type
+						auto type = ident == "if" ? TokenType::CONDITION_IF : TokenType::CONDITION_ELSE;
+						tokens.push_back(Token(type, ident));
 					} else { 
 						tokens.push_back(Token(TokenType::RESERVED, ident));
 					}

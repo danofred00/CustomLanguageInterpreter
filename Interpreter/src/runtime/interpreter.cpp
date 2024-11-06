@@ -6,27 +6,31 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
     
     switch (type)
     {
-        case Statement::NodeType::NUMBER_LITERAL:
+        case NodeType::NUMBER_LITERAL:
             return new NumberValue((static_cast<FloatLiteral*>(statement))->getValue());
-        case Statement::NodeType::STRING_LITERAL:
+        case NodeType::STRING_LITERAL:
             return new StringValue((static_cast<StringLiteral*>(statement))->getValue());
-        case Statement::NodeType::BOOL:
+        case NodeType::BOOL:
             return new BoolValue((static_cast<BoolLiteral*>(statement))->getValue());
-        case Statement::NodeType::BINARY_EXPR:
+        case NodeType::BINARY_EXPR:
             return evalBinaryExpression(static_cast<BinaryExpression*>(statement), env);
-        case Statement::NodeType::RESERVED_LITERAL:
+        case NodeType::RESERVED_LITERAL:
             return evalReserved(static_cast<ReservedExpression*>(statement), env);
-        case Statement::NodeType::IDENTIFIER:
+        case NodeType::IDENTIFIER:
             return evalIdentifier(static_cast<Identifier*>(statement), env);
-        case Statement::NodeType::PROGRAM:
+        case NodeType::BLOCK_PROGRAM:
+        case NodeType::PROGRAM:
             return evalProgram(static_cast<ProgramStatement*>(statement), env);
-        case Statement::NodeType::ASSIGNMENT:
+        case NodeType::ASSIGNMENT:
             return evalAssignmentExpression(static_cast<AssignmentExpression *>(statement), env);
         // Handle function call
-        case Statement::NodeType::CALL_EXPR:
+        case NodeType::CALL_EXPR:
             return evalFunctionCallExpression(static_cast<CallFunctionExpression *>(statement), env);
+        // Handle contional expressions
+        case NodeType::CONDITIONAL:
+            return evalConditionalExpression(static_cast<ConditionalExpression*>(statement), env);
         // Handle statements
-        case Statement::NodeType::VAR_DECLARATION:
+        case NodeType::VAR_DECLARATION:
             return evalVariableDeclaration(static_cast<VariableDeclaration*>(statement), env);
         default:
             // print the expression for debug only
@@ -142,7 +146,7 @@ RuntimeValue * Interpreter::evalAssignmentExpression(AssignmentExpression * expr
     auto left = expr->getLeft();
     
     // check 
-    if( left->getType() != Statement::NodeType::IDENTIFIER ) {
+    if( left->getType() != NodeType::IDENTIFIER ) {
         std::cerr << "AssignmentError: expected an Identifier as left expression, but a " ;
         std::cerr << Statement::nodeTypeToString(left->getType()) + " is gived." << std::endl;
         std::exit(EXIT_FAILURE);
@@ -200,6 +204,34 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 
     // call the function
     return (static_cast<FunctionValue *>(function))->call(args);
+}
+
+
+RuntimeValue * Interpreter::evalConditionalExpression(ConditionalExpression * expr, Environment * env )
+{
+    RuntimeValue * lastEvaluated = nullptr;
+    auto condition = evaluate(expr->getCondition(), env);
+
+    auto execThen = std::any_cast<bool>(condition->getValue());
+    if(execThen) {
+        lastEvaluated = executeIsolatedBloc(expr->getThenBlock(), env);
+    } else {
+        // exec else block if it exists
+        auto elseBlock = expr->getElseBlock();
+        if(elseBlock != nullptr) {
+            lastEvaluated = evaluate(elseBlock, env);
+        }
+    }
+
+    return lastEvaluated;
+}
+
+RuntimeValue * Interpreter::executeIsolatedBloc(Statement * statement, Environment * parent)
+{
+    Environment env = Environment(parent);
+    // evaluate
+    auto result = evaluate(statement, &env);
+    return result;
 }
 
 /**

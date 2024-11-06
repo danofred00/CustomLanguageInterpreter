@@ -4,7 +4,7 @@
 /*
 	Statement class routines
 */
-std::string Statement::nodeTypeToString(Statement::NodeType type)
+std::string Statement::nodeTypeToString(NodeType type)
 {
 	switch (type)
 	{
@@ -30,6 +30,8 @@ std::string Statement::nodeTypeToString(Statement::NodeType type)
 		return "ASSIGNMENT";
 	case NodeType::VAR_DECLARATION:
 		return "VAR_DECLARATION";
+	case NodeType::CONDITIONAL:
+		return "CONDITIONAL";
 	case NodeType::UNKNOW:
 	default:
 		return "UNKNOW";
@@ -129,3 +131,22 @@ std::string CallFunctionExpression::toString()
 
 	return ss.str();
 }
+
+/**
+ * CONDITIONAL EXPRESSION
+ */
+ConditionalExpression::~ConditionalExpression() {
+	if(condition != nullptr) delete condition;
+	if(thenBlock != nullptr) delete thenBlock;
+	if(elseBlock != nullptr) delete elseBlock;
+}
+
+std::string ConditionalExpression::toString() {
+	std::stringstream ss {};
+	ss << "ConditionalExpression { \n";
+	ss << "\tcondition=" << condition->toString() << "\n";
+	ss << "\tthenBlock=" << (thenBlock == nullptr ? "null" : thenBlock->toString()) << "\n";
+	ss << "\telseBlock=" << (elseBlock == nullptr ? "null" : elseBlock->toString()) << "\n}";
+	return ss.str();
+}
+
