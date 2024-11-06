@@ -32,7 +32,14 @@ private:
     std::map<std::string, RuntimeValue *> variables;
 };
 
+
 /**
  * Fill the environment with some default default values
  */
 void setupGlobalScope(Environment * env);
+
+
+/**
+ * Setup the global functions
+ */
+void setupGlobalFunctions(Environment * env);

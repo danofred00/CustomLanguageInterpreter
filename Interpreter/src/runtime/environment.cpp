@@ -1,4 +1,5 @@
 #include <runtime/environment.hpp>
+#include <runtime/functions.hpp>
 
 Environment::Environment(Environment * parent) : parent { parent } 
 { 
@@ -70,4 +71,13 @@ void setupGlobalScope(Environment * env)
 	env->defineVariable("null", new NullValue());
 
     /* TODO: MATH CONSTANTS SETUP */
+    
+    /* SETUP NATIVE FUNCTIONS */
+    setupGlobalFunctions(env);
+}
+
+void setupGlobalFunctions(Environment * env)
+{
+    // SETUP `print` FUNCTION to display something in command line
+    env->defineVariable("print", new FunctionValue(printFunction));
 }

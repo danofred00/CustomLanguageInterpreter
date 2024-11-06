@@ -22,6 +22,9 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
             return evalProgram(static_cast<ProgramStatement*>(statement), env);
         case Statement::NodeType::ASSIGNMENT:
             return evalAssignmentExpression(static_cast<AssignmentExpression *>(statement), env);
+        // Handle function call
+        case Statement::NodeType::CALL_EXPR:
+            return evalFunctionCallExpression(static_cast<CallFunctionExpression *>(statement), env);
         // Handle statements
         case Statement::NodeType::VAR_DECLARATION:
             return evalVariableDeclaration(static_cast<VariableDeclaration*>(statement), env);
@@ -162,6 +165,33 @@ RuntimeValue * Interpreter::evalAssignmentExpression(AssignmentExpression * expr
 
     // return values
     return right;
+}
+
+RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * expr, Environment * env)
+{
+    auto caller = static_cast<Identifier *>(expr->getCaller());
+    std::vector<RuntimeValue *> args {};
+
+    // check if the function is defined
+    if(!env->exists(caller->getIdentifier())) {
+        std::cerr << "Runtime Error: Undefined function " + caller->getIdentifier() << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    // get the function
+    auto function = env->getVariable(caller->getIdentifier());
+    if(function->getType() != RuntimeValue::Type::FUNCTION) {
+        std::cerr << "Runtime Error: " + caller->getIdentifier() + " is not a function." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    // evaluate the arguments
+    for(auto arg : expr->getArguments()) {
+        args.push_back(evaluate(arg, env));
+    }
+
+    // call the function
+    return (static_cast<FunctionValue *>(function))->call(args);
 }
 
 /**

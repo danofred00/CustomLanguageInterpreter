@@ -3,6 +3,7 @@
 #include <any>
 #include <sstream>
 #include <ast.hpp>
+#include <functional>
 
 
 class RuntimeValue
@@ -13,6 +14,7 @@ public:
         STRING_LITERAL = Statement::NodeType::STRING_LITERAL,
         NULL_LITERAL = Statement::NodeType::NULL_LITERAL,
         BOOL = Statement::NodeType::BOOL,
+        FUNCTION = Statement::NodeType::CALL_EXPR,
     };
 
     RuntimeValue(): value{} {}
@@ -44,6 +46,8 @@ public:
             return "NULL_LITERAL";
         case Type::BOOL:
             return "BOOL";
+        case Type::FUNCTION:
+            return "FUNCTION";
         default:
             return "UNKNOW";
         }
@@ -129,5 +133,28 @@ public:
     }
 };
 
+
+class FunctionValue : public RuntimeValue
+{
+    using Function = std::function<RuntimeValue*(std::vector<RuntimeValue*>)>;
+public:
+    FunctionValue(Function func): RuntimeValue(std::any(func)) {};
+
+    Type getType() const { 
+        return Type::FUNCTION;
+    }
+
+    Function getValue() const {
+        return std::any_cast<Function>(RuntimeValue::getValue());
+    }
+
+    RuntimeValue* call(std::vector<RuntimeValue*> args) {
+        return getValue()(args);
+    }
+
+    std::string toString() override {
+        return "Function<0x" + std::to_string((unsigned long long)this) + ">";
+    }
+};
 
 bool isCorrectType(RuntimeValue::Type type, VariableDeclaration::ValueType vType);
