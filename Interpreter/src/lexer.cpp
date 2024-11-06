@@ -69,10 +69,10 @@ void Lexer::tokenize(const std::string & input)
 			
 			} 
 			// handle string vars
-			else if (item == "'") {
+			else if (isStringDeclarator(item)) {
 				std::string str = "";
 				begin++; // skip the first quote
-				while ((begin < end) && (atos(*begin) != "'")) {
+				while ((begin < end) && (atos(*begin) != item)) {
 					str += *(begin++);
 				}
 				begin++; // skip the last quote

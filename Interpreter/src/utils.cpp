@@ -19,7 +19,6 @@ std::vector<std::string> str_split(const std::string str, char delimitor)
 	return tokens;
 }
 
-
 void showTokenList(const TokenList & tokenList)
 {
 	std::cout << "TokenList {" << std::endl;
@@ -74,4 +73,8 @@ bool isIdentifier(const std::string& str)
 
 bool isSkippable(const std::string & str) {
 	return std::isspace(str[0]);
+}
+
+bool isStringDeclarator(const std::string & str) {
+	return (str == "'") || (str == "\"");
 }
