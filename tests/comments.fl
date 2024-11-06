@@ -1,0 +1,9 @@
+# Author: Daniel Leussa
+# This is a simple test for comments
+
+print("[+] Begin testing comments")
+
+# This text will be ignored
+# This will be also ignored
+
+print("[+] Testing comments OK")

@@ -41,6 +41,9 @@ void Lexer::tokenize(const std::string & input)
 		} else if (isSkippable(item)) {
 			// NOTHING to do
 			begin++;
+		} else if (item == "#") {
+			// handle comments single line comments
+			while(begin < end && (*begin) != '\n') begin++;
 		} else {
 			// HANDLE MULTICHARACTER TOKENS
 
