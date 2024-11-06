@@ -59,6 +59,18 @@ private:
 	 */
 	Expression * parseAssignmentExpression();
 
+	/**
+	 * TODO: refactor this method
+	 * parse function call expression
+	 */
+	Expression * parseFunctionCallExpression();
+
+	/**
+	 * Parse a function call expression
+	 * Ex: print('Hello, World!'), add(10, 20), hello(), etc...
+	 */
+	Expression * parseCallExpression(Expression *caller);
+
 	Lexer lexer;
 	TokenList * tokens;
 	TokenList::iterator pos;

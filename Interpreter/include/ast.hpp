@@ -288,9 +288,7 @@ private:
 	std::string keyword;
 };
 
-
 /* Some Statements */
-
 class VariableDeclaration : public Statement
 {
 public: 
@@ -383,5 +381,42 @@ public:
 private:
 	Expression * left;
 	Expression * value;
+};
+
+
+class CallFunctionExpression : public Expression
+{
+public:
+	
+	CallFunctionExpression(Expression * caller, std::vector<Expression *> args)
+		: Expression(), caller{caller}, args{args} {};
+	
+	~CallFunctionExpression();
+
+	inline void setCaller(Expression * expr) {
+		this->caller = expr;
+	}
+
+	inline Expression * getCaller() const {
+		return this->caller;
+	}
+
+	inline void addArgument(Expression * expr) {
+		this->args.push_back(expr);
+	}
+
+	inline std::vector<Expression *> getArguments() const {
+		return this->args;
+	}
+
+	NodeType getType() override {
+		return NodeType::CALL_EXPR;
+	}
+
+	std::string toString() override;
+
+private:
+	Expression * caller;
+	std::vector<Expression *> args;
 };
 

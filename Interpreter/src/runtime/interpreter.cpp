@@ -26,6 +26,8 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
         case Statement::NodeType::VAR_DECLARATION:
             return evalVariableDeclaration(static_cast<VariableDeclaration*>(statement), env);
         default:
+            // print the expression for debug only
+            std::cerr << "Runtime Error: Unexpected statement : " + statement->toString() << std::endl;
             return new NullValue();
     }
 }

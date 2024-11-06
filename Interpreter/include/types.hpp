@@ -27,11 +27,12 @@ enum class TokenType
 	VAR_DECLARATION,
 	
 	/* container tokens */
-	SEMICOLON,
-	OPEN_BRACKET,
-	CLOSE_BRACKET,
-	EQUALS,
+	SEMICOLON,	// ;
+	OPEN_BRACKET, // (
+	CLOSE_BRACKET, // )
+	EQUALS, // =
 	BINARY_OPERATOR, /* +, -, *, /, %  */
+	COMMA, // ,
 
 	/* Value tokens */
 	NUMBER_LITERAL,
@@ -53,6 +54,8 @@ inline std::string tokenTypeToString(TokenType type)
 		return "VAR_DECLARATION";
 	case TokenType::SEMICOLON:
 		return "SEMICOLON";
+	case TokenType::COMMA:
+		return "COMMA";
 	case TokenType::OPEN_BRACKET:
 		return "OPEN_BRACKET";
 	case TokenType::CLOSE_BRACKET:

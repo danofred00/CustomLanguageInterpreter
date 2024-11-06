@@ -29,6 +29,9 @@ void Lexer::tokenize(const std::string & input)
 		} else if (item == ";") {
 			// handle semicolon
 			tokens.push_back(Token(TokenType::SEMICOLON, atos(*(begin++))));
+		} else if (item == ",") {
+			// handle comma
+			tokens.push_back(Token(TokenType::COMMA, atos(*(begin++))));
 		} else if (isSkippable(item)) {
 			// NOTHING to do
 			begin++;

@@ -146,11 +146,11 @@ Expression * Parser::parseMultiplicativeExpression()
 
 Expression * Parser::parseAssignmentExpression()
 {
-	auto left = parseAdditiveExpressions();
+	auto left = parseFunctionCallExpression();
 
 	if((*pos).type == TokenType::EQUALS) {
 		consumeToken(); // skip the equals caracter
-		auto value = parseAssignmentExpression();
+		auto value = parseFunctionCallExpression();
 		value = new AssignmentExpression(left, value);
 
 		// remove the last semicolon expression
@@ -159,6 +159,47 @@ Expression * Parser::parseAssignmentExpression()
 		}
 
 		return value;
+	}
+
+	return left;
+}
+
+Expression * Parser::parseCallExpression(Expression *caller)
+{
+	// expect the caller is an identier
+	if(caller->getType() != Statement::NodeType::IDENTIFIER) {
+		std::cerr << "Syntax Error: Expected an identifier as a caller in a function call." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	consumeToken(); // skip the open bracket
+	std::vector<Expression *> args {};
+
+	// parse arguments
+	while((*pos).type != TokenType::CLOSE_BRACKET) {
+		auto arg = parseExpression();
+		args.push_back(arg);
+		
+		// expect the next should be a comma
+		if((*pos).type == TokenType::COMMA) {
+			consumeToken();
+		}
+	}
+
+	// expect the next should be a close bracket
+	expectToken(TokenType::CLOSE_BRACKET, (*pos).type, "Expected a close bracket after a function call.");
+
+	consumeToken(); // skip the close bracket
+
+	return new CallFunctionExpression(caller, args);
+}
+
+Expression * Parser::parseFunctionCallExpression()
+{
+	Expression * left = parseAdditiveExpressions();
+
+	if((*pos).type == TokenType::OPEN_BRACKET) {
+		return parseCallExpression(left);
 	}
 
 	return left;

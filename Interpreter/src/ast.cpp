@@ -105,3 +105,27 @@ std::string BinaryExpression::toString()
 
 	return ss.str();
 }
+
+/**
+ * CALL FUNCTION EXPRESSION
+ */
+CallFunctionExpression::~CallFunctionExpression() {
+	delete caller;
+	for(auto arg : args) {
+		delete arg;
+	}
+}
+
+std::string CallFunctionExpression::toString()
+{
+	std::stringstream ss {};
+	ss << "CallFunctionExpression { \n";
+	ss << "\tcaller: " << caller->toString();
+	ss << "\n\targs: [";
+	for(auto arg : args) {
+		ss << arg->toString() << ", ";
+	}
+	ss << "]\n}";
+
+	return ss.str();
+}
