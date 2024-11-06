@@ -104,6 +104,8 @@ Expression* Parser::parsePrimaryExpression()
 		std::cerr << "Syntax Error: Unable to parse Token " << token << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
+
+	return value;
 }
 
 Expression * Parser::parseAdditiveExpressions()

@@ -25,8 +25,8 @@ void interprete(std::string & sourceCode, Parser * parser, Interpreter * interpr
 
 void reply(Parser * parser, Interpreter * interpreter, Environment * env)
 {
+	std::string line {};
 	while (true) {
-		std::string line;
 		std::cin.clear();
 		std::cout.flush();
 		std::cout << ">>> ";

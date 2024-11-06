@@ -67,10 +67,10 @@ RuntimeValue * Interpreter::evalVariableDeclaration(VariableDeclaration * varDec
 
 RuntimeValue * Interpreter::evalProgram(ProgramStatement * program,  Environment * env)
 {
-    RuntimeValue * lastEvaluated = new NullValue();
+    RuntimeValue * lastEvaluated = nullptr;
 
     for(auto stmt : program->getBody()) {
-        delete lastEvaluated;
+        // delete lastEvaluated;
         lastEvaluated = evaluate(stmt, env);
     }
 

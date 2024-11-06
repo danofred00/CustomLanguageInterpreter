@@ -5,8 +5,9 @@
 RuntimeValue* printFunction(const std::vector<RuntimeValue*>& args)
 {
     for(auto& arg : args) {
-        std::cout << arg->toString() << std::endl;
+        std::cout << arg->toString() << " ";
     }
+    std::cout << std::endl;
 
     return nullptr;
 }
@@ -16,7 +17,6 @@ RuntimeValue* readFunction(const std::vector<RuntimeValue*>& args)
 {
     auto formats = { "s", "n" };
     std::string line {};
-    RuntimeValue * result = nullptr;
     // ensure we have only two arguments
     if(args.size() != 2) {
         std::cerr << "Expected two arguments: read(prompt, format)" << std::endl;
@@ -48,15 +48,13 @@ RuntimeValue* readFunction(const std::vector<RuntimeValue*>& args)
     std::getline(std::cin, line);
     // return the line by checking the return type
     if(args[1]->toString() == "s") {
-        result = new StringValue(line);
-    } else {
-        if(isNumeric(line)) {
-            result = new RuntimeValue(std::stod(line));
-        } else {
-            std::cerr << "Invalid number: " << line << std::endl;
-            std::exit(EXIT_FAILURE);
-        }
+        return new StringValue(line);
     }
 
-    return result;
+    if(!isNumeric(line)) {
+        std::cerr << "Invalid number: " << line << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    return new NumberValue(std::stof(line));
 }
