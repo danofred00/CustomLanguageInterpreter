@@ -31,7 +31,7 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
         default:
             // print the expression for debug only
             std::cerr << "Runtime Error: Unexpected statement : " + statement->toString() << std::endl;
-            return new NullValue();
+            return nullptr;
     }
 }
 
@@ -187,7 +187,15 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 
     // evaluate the arguments
     for(auto arg : expr->getArguments()) {
-        args.push_back(evaluate(arg, env));
+        auto val = evaluate(arg, env);
+
+        // check if it's not null
+        if(val == nullptr) {
+            std::cerr << "TypeError: Can not pass 'Non-Value' as argument." << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+
+        args.push_back(val);
     }
 
     // call the function

@@ -15,7 +15,7 @@ public:
 		/* Values */
 		NUMBER_LITERAL,
 		STRING_LITERAL,
-		NULL_LITERAL,
+		// NULL_LITERAL,
 		BOOL,
 		RESERVED_LITERAL,
 		/* Identifier */
@@ -235,19 +235,19 @@ public:
 /**
  * A NULL expression
 */
-class NullLiteral : public StringLiteral
-{
-public:
-	NullLiteral(): StringLiteral("null") {};
+// class NullLiteral : public StringLiteral
+// {
+// public:
+// 	NullLiteral(): StringLiteral("null") {};
 	
-	NodeType getType() {
-		return Statement::NodeType::NULL_LITERAL;
-	}
+// 	NodeType getType() {
+// 		return Statement::NodeType::NULL_LITERAL;
+// 	}
 
-	std::string toString() override {
-		return "NullLiteral<value='null'>";
-	}
-};
+// 	std::string toString() override {
+// 		return "NullLiteral<value='null'>";
+// 	}
+// };
 
 /**
  * A boolean expression

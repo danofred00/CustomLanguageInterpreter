@@ -10,9 +10,9 @@ class RuntimeValue
 {
 public:
     enum class Type {
+        NULL_LITERAL = 0,
         NUMBER_LITERAL = Statement::NodeType::NUMBER_LITERAL,
         STRING_LITERAL = Statement::NodeType::STRING_LITERAL,
-        NULL_LITERAL = Statement::NodeType::NULL_LITERAL,
         BOOL = Statement::NodeType::BOOL,
         FUNCTION = Statement::NodeType::CALL_EXPR,
     };

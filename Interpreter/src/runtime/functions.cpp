@@ -6,5 +6,5 @@ RuntimeValue* printFunction(const std::vector<RuntimeValue*>& args)
         std::cout << arg->toString() << std::endl;
     }
 
-    return new NullValue();
+    return nullptr;
 }

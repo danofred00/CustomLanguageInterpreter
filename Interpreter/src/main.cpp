@@ -18,6 +18,8 @@ void interprete(std::string & sourceCode, Parser * parser, Interpreter * interpr
 	auto program = parser->produceAST(sourceCode);
 	auto value = interpreter->evaluate(program, env);
 
+	if(value == nullptr) { return; }
+	// display the result
 	std::cout << value->toString() << std::endl;	
 }
 
