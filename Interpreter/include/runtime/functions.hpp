@@ -1,6 +1,8 @@
-#include <runtime/types.hpp>
-
 /**
- * Print function that take multiples arguments and print them
+ * @file include/runtime/functions.hpp
+ * This file contains the declaration of the functions
  */
-RuntimeValue* printFunction(const std::vector<RuntimeValue*>& args);
+
+#include <runtime/functions/io.hpp>
+#include <runtime/functions/math.hpp>
+

@@ -80,4 +80,6 @@ void setupGlobalFunctions(Environment * env)
 {
     // SETUP `print` FUNCTION to display something in command line
     env->defineVariable("print", new FunctionValue(printFunction));
+    // SETUP `read` FUNCTION to read something from command line
+    env->defineVariable("read", new FunctionValue(readFunction));
 }
