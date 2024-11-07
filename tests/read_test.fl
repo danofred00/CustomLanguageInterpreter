@@ -1,8 +1,6 @@
-number currentYear = 2024;
-number year;
-number age;
 
-year = read("Quelle annee es-tu nee ? ", "n");
-age = currentYear - year;
+string name;
 
-print("Tu as : ", age, "ans")
+name = read("What's your name ? ", "s")
+
+print("Your name is", name)

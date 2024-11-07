@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <types.hpp>
 
 
 /*
@@ -13,7 +14,7 @@ std::vector<std::string> str_split(const std::string str, char delimitor);
 /*
 	Display in the outstream a tokenList object
 */
-void showTokenList(const TokenList& tokenList);
+// void showTokenList(const TokenList& tokenList);
 
 
 /* LEXER helpers */
@@ -34,10 +35,6 @@ bool isAlpha(const std::string& str);
 
 bool isKeyword(const std::string& str);
 
-bool isKeywordLiteral(const std::string& str);
-
-bool isVariableDeclarationKeyword(const std::string& str);
-
 bool isIdentifier(const std::string& str);
 
 bool isSkippable(const std::string & str);
@@ -53,11 +50,6 @@ bool isStringDeclarator(const std::string & str);
 bool isComparaisonOperator(const std::string & str);
 
 /**
- * Check if it's a logic operator
+ * Check if it's a single operator
  */
-bool isLogicOperator(const std::string & str);
-
-/**
- * Check conditional keyword
- */
-bool isConditionalKeyword(const std::string & str);
+bool isSingleOperator(const std::string & str);

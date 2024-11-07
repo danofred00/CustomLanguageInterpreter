@@ -12,7 +12,6 @@ public:
 
 private:
 	void handleEquals();
-	void handleLogicOperators(const std::string & str);
 	void handleMultivaluesCharacters(const std::string & str);
 	void handleComparaisonOperators();
 

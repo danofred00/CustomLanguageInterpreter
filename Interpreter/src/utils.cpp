@@ -19,14 +19,14 @@ std::vector<std::string> str_split(const std::string str, char delimitor)
 	return tokens;
 }
 
-void showTokenList(const TokenList & tokenList)
-{
-	std::cout << "TokenList {" << std::endl;
-    for (auto & token : tokenList) {
-		std::cout << token << std::endl;
-	}
-	std::cout << "}" << std::endl;
-}
+// void showTokenList(const TokenList & tokenList)
+// {
+// 	std::cout << "TokenList {" << std::endl;
+//     for (auto & token : tokenList) {
+// 		std::cout << token << std::endl;
+// 	}
+// 	std::cout << "}" << std::endl;
+// }
 
 bool str_match(const std::string& str, const std::string& pattern)
 {
@@ -47,23 +47,7 @@ bool isAlpha(const std::string& str)
 
 bool isKeyword(const std::string& str)
 {
-	for (auto it = std::begin(keywords); it != std::end(keywords); it++) {
-		if ((*it) == str) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool isKeywordLiteral(const std::string& str)
-{
-	return std::find(std::begin(keywordsLitterals), std::end(keywordsLitterals), str) != std::end(keywordsLitterals);
-}
-
-bool isVariableDeclarationKeyword(const std::string& str)
-{
-	return std::find(std::begin(variablesKeywords), std::end(variablesKeywords), str) != std::end(variablesKeywords);
+	return keywords.find(str) != keywords.end();
 }
 
 bool isIdentifier(const std::string& str)
@@ -79,17 +63,11 @@ bool isStringDeclarator(const std::string & str) {
 	return (str == "'") || (str == "\"");
 }
 
-bool isConditionalKeyword(const std::string & str) {
-	return std::find(std::begin(conditionalKeywords), std::end(conditionalKeywords), str) != std::end(conditionalKeywords);
-}
-
 bool isComparaisonOperator(const std::string & str) {
 	std::initializer_list<std::string> lst = { ">", ">=", "<", "<=" };
 	return std::find(lst.begin(), lst.end(), str) != lst.end();
 }
 
-bool isLogicOperator(const std::string & str) {
-	auto & lst = logicExpressionKeywords;
-	return std::find(std::begin(lst), std::end(lst), str) != std::end(lst);
+bool isSingleOperator(const std::string & str) {
+	return singleOperators.find(str) != singleOperators.end();
 }
-
