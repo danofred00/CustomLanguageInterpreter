@@ -6,3 +6,4 @@ endfunction()
 # Add all Native functions files
 add_function("io")
 add_function("math")
+add_function("core")

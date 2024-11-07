@@ -39,15 +39,15 @@ public:
         switch (type)
         {
         case Type::NUMBER_LITERAL:
-            return "NUMBER_LITERAL";
+            return "number";
         case Type::STRING_LITERAL:
-            return "STRING_LITERAL";
+            return "string";
         case Type::NULL_LITERAL:
-            return "NULL_LITERAL";
+            return "null";
         case Type::BOOL:
-            return "BOOL";
+            return "bool";
         case Type::FUNCTION:
-            return "FUNCTION";
+            return "function";
         default:
             return "UNKNOW";
         }
@@ -136,7 +136,7 @@ public:
 
 class FunctionValue : public RuntimeValue
 {
-    using Function = std::function<RuntimeValue*(std::vector<RuntimeValue*>)>;
+    using Function = std::function<RuntimeValue*(std::vector<RuntimeValue*> &)>;
 public:
     FunctionValue(Function func): RuntimeValue(std::any(func)) {};
 

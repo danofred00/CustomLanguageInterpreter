@@ -82,4 +82,6 @@ void setupGlobalFunctions(Environment * env)
     env->defineVariable("print", new FunctionValue(printFunction));
     // SETUP `read` FUNCTION to read something from command line
     env->defineVariable("read", new FunctionValue(readFunction));
+    // SETUP `type` FUNCTION to get the type of something
+    env->defineVariable("type", new FunctionValue(typeFunction));
 }
