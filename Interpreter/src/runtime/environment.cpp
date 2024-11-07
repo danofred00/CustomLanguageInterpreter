@@ -84,4 +84,13 @@ void setupGlobalFunctions(Environment * env)
     env->defineVariable("read", new NativeFunctionValue(readFunction));
     // SETUP `type` FUNCTION to get the type of something
     env->defineVariable("type", new NativeFunctionValue(typeFunction));
+
+    // setup math functions
+    setupMathFunctions(env);
+}
+
+void setupMathFunctions(Environment * env)
+{
+    // SETUP `sqrt` FUNCTION to get the square root of a number
+    env->defineVariable("sqrt", new NativeFunctionValue(sqrtFunction));
 }

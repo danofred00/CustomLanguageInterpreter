@@ -5,4 +5,7 @@
 
 #pragma once
 
+#include <vector>
 #include <runtime/types.hpp>
+
+RuntimeValue * sqrtFunction(std::vector<RuntimeValue *> args);

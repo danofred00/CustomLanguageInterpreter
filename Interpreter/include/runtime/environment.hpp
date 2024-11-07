@@ -43,3 +43,8 @@ void setupGlobalScope(Environment * env);
  * Setup the global functions
  */
 void setupGlobalFunctions(Environment * env);
+
+/**
+ * Setup the math functions
+ */
+void setupMathFunctions(Environment * env);
