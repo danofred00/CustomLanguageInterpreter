@@ -83,3 +83,13 @@ bool isConditionalKeyword(const std::string & str) {
 	return std::find(std::begin(conditionalKeywords), std::end(conditionalKeywords), str) != std::end(conditionalKeywords);
 }
 
+bool isComparaisonOperator(const std::string & str) {
+	std::initializer_list<std::string> lst = { ">", ">=", "<", "<=" };
+	return std::find(lst.begin(), lst.end(), str) != lst.end();
+}
+
+bool isLogicOperator(const std::string & str) {
+	auto & lst = logicExpressionKeywords;
+	return std::find(std::begin(lst), std::end(lst), str) != std::end(lst);
+}
+

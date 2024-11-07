@@ -48,6 +48,16 @@ bool isSkippable(const std::string & str);
 bool isStringDeclarator(const std::string & str);
 
 /**
+ * Check if it's a comparaison operator
+ */
+bool isComparaisonOperator(const std::string & str);
+
+/**
+ * Check if it's a logic operator
+ */
+bool isLogicOperator(const std::string & str);
+
+/**
  * Check conditional keyword
  */
 bool isConditionalKeyword(const std::string & str);

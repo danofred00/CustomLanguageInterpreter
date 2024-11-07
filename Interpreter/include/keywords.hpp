@@ -16,6 +16,8 @@ const std::vector<std::string> keywords = {
 	/* conditional expressions */
 	"if", 
 	"else",
+	/* logic operators */
+	"and", "or", "not",
 	 /* loops */
 	"for"
 };
@@ -37,3 +39,6 @@ const std::vector<std::string> conditionalKeywords = {
 	"else"
 };
 
+const std::vector<std::string> logicExpressionKeywords = {
+	"not", "and", "or"
+};

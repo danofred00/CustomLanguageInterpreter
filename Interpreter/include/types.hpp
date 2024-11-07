@@ -45,6 +45,16 @@ enum class TokenType
 	CONDITION_IF,
 	CONDITION_ELSE,
 
+	/* Logical Operators */
+	LOGIC_GREATER,	// >
+	LOGIC_GREATER_EQUAL, // >=
+	LOGIC_LOWER, // <
+	LOGIC_LOWER_EQUAL, // <=
+	LOGIC_NOT, // not | !
+	LOGIC_AND, // and | &&
+	LOGIC_OR,  // or  | ||
+	LOGIC_EQUAL, // ==
+
 	/* Others */
 	END_OF_FILE,	// EOF of the source code
 	UNKNOW,
@@ -84,6 +94,24 @@ inline std::string tokenTypeToString(TokenType type)
 		return "CONDITION_ELSE";
 	case TokenType::OPEN_PAREN:
 		return "OPEN_PAREN";
+	// comparaison & logic expressions
+	case TokenType::LOGIC_AND:
+		return "LOGIC_AND";
+	case TokenType::LOGIC_EQUAL:
+		return "LOGIC_EQUAL";
+	case TokenType::LOGIC_GREATER:
+		return "LOGIC_GREATER";
+	case TokenType::LOGIC_GREATER_EQUAL:
+		return "LOGIC_GREATER_EQUAL";
+	case TokenType::LOGIC_LOWER:
+		return "LOGIC_LOWER";
+	case TokenType::LOGIC_LOWER_EQUAL:
+		return "LOGIC_LOWER_EQUAL";
+	case TokenType::LOGIC_NOT:
+		return "LOGIC_NOT";
+	case TokenType::LOGIC_OR:
+		return "LOGIC_OR";
+	// end
 	case TokenType::CLOSE_PAREN:
 		return "CLOSE_PAREN";
 	case TokenType::UNKNOW:

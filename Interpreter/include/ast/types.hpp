@@ -16,6 +16,9 @@ enum class NodeType {
     VAR_DECLARATION,
     ASSIGNMENT,
     CONDITIONAL,
+    /* LOGIC OPERATORS */
+    LOGIC_BINARY,
+    NOT,
     /* Others */
     RESERVED,
     BINARY_EXPR,

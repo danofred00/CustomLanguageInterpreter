@@ -69,6 +69,8 @@ public:
 
 	BinaryExpression(Expression * left, Expression * right): Expression(), left{left}, right{right} {}
 
+	BinaryExpression(Expression * left, Expression * right, const std::string & op): Expression(), left{left}, right{right}, op{op} {}
+
 	~BinaryExpression();
 
 	NodeType getType() override {
@@ -289,5 +291,4 @@ private:
 	Expression * caller;
 	std::vector<Expression *> args;
 };
-
 

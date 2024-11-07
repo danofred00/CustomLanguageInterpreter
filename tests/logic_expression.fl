@@ -1,0 +1,20 @@
+# eval > expression
+print("[+] Evaluate > expression (4 > 5) :", 4 > 5)
+
+# eval < expression
+print("[+] Evaluate < expression (4 < 5) :", 4 < 5)
+
+# eval >= expression
+print("[+] Evaluate >= expression (4 >= 5) :", 4 >= 5)
+
+# eval <= expression
+print("[+] Evaluate <= expression (4 <= 5) :", 4 <= 5)
+
+# eval and expression
+print("[+] Evaluate and expression (false and true) :", false and true)
+
+# eval or expression
+print("[+] Evaluate or expression (true or false) :", true or false)
+
+# eval not expression
+print("[+] Evaluate not expression (not false) :", not false)

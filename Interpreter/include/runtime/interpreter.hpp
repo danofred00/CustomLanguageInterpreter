@@ -30,4 +30,8 @@ private:
     RuntimeValue * evalConditionalExpression(ConditionalExpression * expr, Environment * env );
 
     RuntimeValue * executeIsolatedBloc(Statement * statement, Environment * parent);
+
+    RuntimeValue * evalNotExpression(Not * expr, Environment * env);
+
+    RuntimeValue * evalLogicExpression(LogicBinary * logic, Environment * env);
 };

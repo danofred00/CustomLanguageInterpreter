@@ -1,4 +1,5 @@
 #include <runtime/interpreter.hpp>
+#include <runtime/utils.hpp>
 
 RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
 {
@@ -32,6 +33,11 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
         // Handle statements
         case NodeType::VAR_DECLARATION:
             return evalVariableDeclaration(static_cast<VariableDeclaration*>(statement), env);
+        // Not expression
+        case NodeType::NOT:
+            return evalNotExpression(static_cast<Not *>(statement), env);
+        case NodeType::LOGIC_BINARY:
+            return evalLogicExpression(static_cast<LogicBinary*>(statement), env);
         default:
             // print the expression for debug only
             std::cerr << "Runtime Error: Unexpected statement : " + statement->toString() << std::endl;
@@ -206,6 +212,37 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
     return (static_cast<FunctionValue *>(function))->call(args);
 }
 
+RuntimeValue * Interpreter::evalNotExpression(Not * expr, Environment * env)
+{
+    auto value = evaluate(expr->getValue(), env);
+    auto type = value->getType();
+
+    if((type != RuntimeValue::Type::BOOL) && (type != RuntimeValue::Type::NUMBER_LITERAL)) {
+        std::cerr << "LogicError: Expected a boolean value for not expression, got a ";
+        std::cerr << RuntimeValue::typeToString(type) << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    return new BoolValue(!castToBool(value));
+}
+
+RuntimeValue * Interpreter::evalLogicExpression(LogicBinary * logic, Environment * env)
+{
+    auto left = evaluate(logic->getLeft(), env);
+    auto right = evaluate(logic->getRight(), env);
+    auto op = logic->getOperator();
+    auto result = false;
+
+    if(op == "and") {
+        result = castToBool(left) && castToBool(right);
+    } else if(op == "or") {
+        result = castToBool(left) || castToBool(right);  
+    } else {
+        result = comparaison(left, right, op);
+    }
+
+    return new BoolValue(result);
+}
 
 RuntimeValue * Interpreter::evalConditionalExpression(ConditionalExpression * expr, Environment * env )
 {

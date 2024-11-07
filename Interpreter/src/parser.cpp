@@ -40,7 +40,7 @@ Statement* Parser::parseStatement()
 
 Expression* Parser::parseExpression()
 {
-	return parseAssignmentExpression();
+	return parseLogicComparaisonExpression();
 }
 
 Statement * Parser::parseVariableDeclaration() 
@@ -102,6 +102,9 @@ Expression* Parser::parsePrimaryExpression()
 		return static_cast<Expression*>(new ReservedExpression(token.value));
 	case TokenType::CONDITION_IF:
 		return parseConditionalExpression();
+	case TokenType::LOGIC_NOT:
+		value = parseExpression();
+		return static_cast<Expression *>(new Not(value));
 	default:
 		std::cerr << "Syntax Error: Unable to parse Token " << token << std::endl;
 		std::exit(EXIT_FAILURE);
@@ -220,7 +223,7 @@ Expression * Parser::parseConditionalExpression()
 	consumeToken(); // read the open paren
 
 	// read condition
-	condition = parseAssignmentExpression();
+	condition = parseLogicComparaisonExpression();
 	// expect close parent after conditional
 	expectToken(TokenType::CLOSE_PAREN, (*pos).type, "Expect ')' inside if conditional statement");
 	consumeToken(); // read the close paren
@@ -260,6 +263,31 @@ Statement * Parser::parseBlockStatement()
 	consumeToken(); // read the close bracket
 	
 	return static_cast<Statement *>(block);
+}
+
+Expression * Parser::parseLogicComparaisonExpression()
+{
+	Expression * left = parseAssignmentExpression();
+	Expression * rigth = nullptr;
+	auto token = (*pos);
+
+	switch (token.type)
+	{
+		case TokenType::LOGIC_AND:
+		case TokenType::LOGIC_EQUAL:
+		case TokenType::LOGIC_GREATER:
+		case TokenType::LOGIC_GREATER_EQUAL:
+		case TokenType::LOGIC_LOWER:
+		case TokenType::LOGIC_LOWER_EQUAL:
+		case TokenType::LOGIC_OR:
+			token = consumeToken();
+			rigth = parseExpression();
+			left = new LogicBinary(left, rigth, token.value);
+	default:
+		break;
+	}
+
+	return left;
 }
 
 bool Parser::isEOF()

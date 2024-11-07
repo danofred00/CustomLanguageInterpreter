@@ -84,6 +84,11 @@ private:
 	 */
 	Statement * parseBlockStatement();
 
+	/**
+	 * Parse logic and comparaison expressions
+	 */
+	Expression * parseLogicComparaisonExpression();
+
 	Lexer lexer;
 	TokenList * tokens;
 	TokenList::iterator pos;

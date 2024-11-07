@@ -88,7 +88,7 @@ public:
         return Type::NULL_LITERAL;
     }
 
-    int getValue() const { return NULL; }
+    int getValue() const { return 0; }
 
     std::string toString() override { return "null"; }
 };
