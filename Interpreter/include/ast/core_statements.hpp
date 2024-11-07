@@ -31,7 +31,6 @@ public:
 class ProgramStatement : public Statement
 {
 public:
-
 	~ProgramStatement();
 
 	NodeType getType() override {
@@ -124,7 +123,7 @@ public:
 	}
 
 	inline void setIdentifier(const std::string & str){
-		this->identifier = std::move(str);
+		this->identifier = str;
 	}
 
 	inline std::string getIdentifier() const {

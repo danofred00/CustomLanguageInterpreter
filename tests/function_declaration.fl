@@ -1,0 +1,15 @@
+
+fn somme(number x, number y) {
+    return x + y
+}
+
+fn sayHello(string name) {
+    print("Hello", name, "!")
+}
+
+fn main() {
+	sayHello("World")
+	print(somme(1, 2))
+}
+
+main()

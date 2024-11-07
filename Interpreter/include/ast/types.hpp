@@ -19,12 +19,15 @@ enum class NodeType {
     /* LOGIC OPERATORS */
     LOGIC_BINARY,
     NOT,
+    /* Functions Declarations */
+    FUNCTION_DECLARATION,
+    RETURN,
+    FVAR_DECLARATION,
     /* Others */
     RESERVED,
     BINARY_EXPR,
     CALL_EXPR,
     UNARY_EXPR,
-    FUNCTION_DECLARATION,
     EXPRESSION,
     UNKNOW,
 };

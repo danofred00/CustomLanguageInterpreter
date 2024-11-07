@@ -10,11 +10,12 @@ class RuntimeValue
 {
 public:
     enum class Type {
-        NULL_LITERAL = 0,
-        NUMBER_LITERAL = NodeType::NUMBER_LITERAL,
-        STRING_LITERAL = NodeType::STRING_LITERAL,
-        BOOL = NodeType::BOOL,
-        FUNCTION = NodeType::CALL_EXPR,
+        NULL_LITERAL,
+        NUMBER_LITERAL,
+        STRING_LITERAL,
+        BOOL,
+        FUNCTION,
+        NATIVE_FUNCTION
     };
 
     RuntimeValue(): value{} {}
@@ -46,6 +47,7 @@ public:
             return "null";
         case Type::BOOL:
             return "bool";
+        case Type::NATIVE_FUNCTION:
         case Type::FUNCTION:
             return "function";
         default:
@@ -114,7 +116,6 @@ public:
     }
 };
 
-
 class BoolValue : public RuntimeValue
 {
 public: 
@@ -133,19 +134,18 @@ public:
     }
 };
 
-
-class FunctionValue : public RuntimeValue
+class NativeFunctionValue : public RuntimeValue
 {
-    using Function = std::function<RuntimeValue*(std::vector<RuntimeValue*> &)>;
+    using NativeFunction = std::function<RuntimeValue*(std::vector<RuntimeValue*> &)>;
 public:
-    FunctionValue(Function func): RuntimeValue(std::any(func)) {};
+    NativeFunctionValue(NativeFunction func): RuntimeValue(std::any(func)) {};
 
     Type getType() const { 
-        return Type::FUNCTION;
+        return Type::NATIVE_FUNCTION;
     }
 
-    Function getValue() const {
-        return std::any_cast<Function>(RuntimeValue::getValue());
+    NativeFunction getValue() const {
+        return std::any_cast<NativeFunction>(RuntimeValue::getValue());
     }
 
     RuntimeValue* call(std::vector<RuntimeValue*> args) {
@@ -155,6 +155,29 @@ public:
     std::string toString() override {
         return "Function<0x" + std::to_string((unsigned long long)this) + ">";
     }
+};
+
+class FunctionValue : public RuntimeValue
+{
+public:
+    FunctionValue(std::string name, FunctionDeclaration* declaration)
+        : RuntimeValue(), name{ name }, declaration{ declaration } {};
+
+	Type getType() const {
+		return Type::FUNCTION;
+	}
+
+    std::string toString() override {
+        return "Function<" + name + ">";
+    }
+
+    FunctionDeclaration* getDeclaration() const {
+        return declaration;
+    }
+
+private:
+    std::string name;
+	FunctionDeclaration* declaration;
 };
 
 bool isCorrectType(RuntimeValue::Type type, VariableDeclaration::ValueType vType);

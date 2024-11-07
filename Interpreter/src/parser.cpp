@@ -13,7 +13,7 @@ Parser::~Parser() {
 
 ProgramStatement * Parser::produceAST(const std::string& sourceCode)
 {
-	lexer.tokenize(std::move(sourceCode));
+	lexer.tokenize(sourceCode);
 	pos = std::begin(*tokens);
 	program = new ProgramStatement();
 	
@@ -33,6 +33,8 @@ Statement* Parser::parseStatement()
 	{
 		case TokenType::VAR_DECLARATION:
 			return parseVariableDeclaration();
+		case TokenType::FN:
+			return parseFunctionDeclaration();
 		default:
 			return parseExpression();
 	}
@@ -46,20 +48,8 @@ Expression* Parser::parseExpression()
 Statement * Parser::parseVariableDeclaration() 
 {
 	auto token = consumeToken();
-	VariableDeclaration::ValueType type = VariableDeclaration::ValueType::NUMBER;
-	std::string identifier {};
-	if(token.value == "string") {
-		type = VariableDeclaration::ValueType::STRING;
-	} else if(token.value == "bool") {
-		type = VariableDeclaration::ValueType::BOOLEAN;
-	} else {
-		// nothing to do, because we knows that the token is a var declaration
-	}
-	// ensure that the next token is an identifier
-	token = consumeToken();
-	expectToken(TokenType::IDENTIFIER, token.type, std::string("Expected an identifier after a variable declaration.").c_str());
-	identifier = token.value;
-
+	auto [identifier, type] = parseArgDeclaration(token);
+	
 	token = consumeToken();
 	// handle if its a semicolon
 	if(token.type == TokenType::SEMICOLON) {
@@ -77,6 +67,62 @@ Statement * Parser::parseVariableDeclaration()
 	expectToken(TokenType::SEMICOLON, consumeToken().type, "Expected a semicolon after an expression in a variable declaration.");
 
 	return new VariableDeclaration(identifier, type, value);
+}
+
+std::tuple<std::string, VariableDeclaration::ValueType> Parser::parseArgDeclaration(Token token)
+{
+	std::string name;
+	VariableDeclaration::ValueType type = VariableDeclaration::ValueType::NUMBER;
+	
+	if (token.value == "string") {
+		type = VariableDeclaration::ValueType::STRING;
+	}
+	else if (token.value == "bool") {
+		type = VariableDeclaration::ValueType::BOOLEAN;
+	}
+	else {
+		// nothing to do, because we knows that the token is a var declaration
+	}
+	// ensure that the next token is an identifier
+	expectToken(TokenType::IDENTIFIER, (*pos).type, std::string("Expected an identifier after a variable declaration.").c_str());
+	name = consumeToken().value;
+
+	return std::make_tuple(name, type);
+}
+
+Statement * Parser::parseFunctionDeclaration()
+{
+	consumeToken(); // consume the function token
+	auto fn = new FunctionDeclaration();
+
+	// ensure that the next token is an identifier
+	auto token = consumeToken();
+	expectToken(TokenType::IDENTIFIER, token.type, "Expected an identifier after a function declaration.");
+	fn->setName(token.value);
+
+	// ensure the next token is an open paren
+	expectToken(TokenType::OPEN_PAREN, (*pos).type, "Expected an open paren '(' inside a function declaration");
+	consumeToken(); // consume the open paren
+
+	// read arguments
+	while (!isEOF() && (*pos).type != TokenType::CLOSE_PAREN) {
+		auto [name, type] = parseArgDeclaration(consumeToken());
+		fn->getParameters().push_back(new Argument(name, type));
+
+		// expect the next should be a comma
+		if ((*pos).type == TokenType::COMMA) {
+			consumeToken();
+		}
+	}
+	// expect close paren
+	expectToken(TokenType::CLOSE_PAREN, (*pos).type, "Expected a ')' after var declaration inside a function declaration");
+	consumeToken();
+
+	// ensure the next is a block expression
+	expectToken(TokenType::OPEN_BRACKET, (*pos).type, "Expected an open bracket '{' after a function declaration.");
+	fn->setBody(static_cast<BlocStatement *>(parseBlockStatement()));
+
+	return fn;
 }
 
 Expression* Parser::parsePrimaryExpression()
@@ -105,6 +151,8 @@ Expression* Parser::parsePrimaryExpression()
 	case TokenType::LOGIC_NOT:
 		value = parseExpression();
 		return static_cast<Expression *>(new Not(value));
+	case TokenType::RETURN:
+		return static_cast<Expression*>(new ReturnStatement(parseExpression()));
 	default:
 		std::cerr << "Syntax Error: Unable to parse Token " << token << std::endl;
 		std::exit(EXIT_FAILURE);
@@ -283,8 +331,6 @@ Expression * Parser::parseLogicComparaisonExpression()
 			token = consumeToken();
 			rigth = parseExpression();
 			left = new LogicBinary(left, rigth, token.value);
-	default:
-		break;
 	}
 
 	return left;

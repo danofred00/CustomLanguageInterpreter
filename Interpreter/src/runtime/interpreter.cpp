@@ -33,6 +33,10 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
         // Handle statements
         case NodeType::VAR_DECLARATION:
             return evalVariableDeclaration(static_cast<VariableDeclaration*>(statement), env);
+        case NodeType::FUNCTION_DECLARATION:
+            return evalFunctionDeclaration(static_cast<FunctionDeclaration*>(statement), env);
+        case NodeType::RETURN:
+            return evaluate((static_cast<ReturnStatement*>(statement))->getValue(), env);
         // Not expression
         case NodeType::NOT:
             return evalNotExpression(static_cast<Not *>(statement), env);
@@ -71,6 +75,21 @@ RuntimeValue * Interpreter::evalVariableDeclaration(VariableDeclaration * varDec
 }
 
 
+RuntimeValue* Interpreter::evalFunctionDeclaration(FunctionDeclaration* func, Environment* env)
+{
+	auto name = func->getName();
+    FunctionValue* fn = nullptr;
+    
+	// check if the function is already defined
+    if (env->exists(name)) {
+        throw std::runtime_error("RuntimeError: Function " + name + " is already defined.");
+    }
+
+	fn = new FunctionValue(name, func);
+	env->defineVariable(name, fn);
+    return nullptr;
+}
+
 /**
  * EVALUATES EXPRESSIONS
  */
@@ -82,6 +101,10 @@ RuntimeValue * Interpreter::evalProgram(ProgramStatement * program,  Environment
     for(auto stmt : program->getBody()) {
         // delete lastEvaluated;
         lastEvaluated = evaluate(stmt, env);
+		// break if return statement
+        if (stmt->getType() == NodeType::RETURN) {
+			break;
+		}
     }
 
     return lastEvaluated;
@@ -180,7 +203,7 @@ RuntimeValue * Interpreter::evalAssignmentExpression(AssignmentExpression * expr
 RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * expr, Environment * env)
 {
     auto caller = static_cast<Identifier *>(expr->getCaller());
-    std::vector<RuntimeValue *> args {};
+    std::   vector<RuntimeValue *> args {};
 
     // check if the function is defined
     if(!env->exists(caller->getIdentifier())) {
@@ -190,26 +213,62 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 
     // get the function
     auto function = env->getVariable(caller->getIdentifier());
-    if(function->getType() != RuntimeValue::Type::FUNCTION) {
-        std::cerr << "Runtime Error: " + caller->getIdentifier() + " is not a function." << std::endl;
-        std::exit(EXIT_FAILURE);
+
+    if (function->getType() != RuntimeValue::Type::NATIVE_FUNCTION && function->getType() != RuntimeValue::Type::FUNCTION) {
+        throw std::runtime_error("Runtime Error: " + caller->getIdentifier() + " is not a function.");
     }
 
     // evaluate the arguments
     for(auto arg : expr->getArguments()) {
         auto val = evaluate(arg, env);
-
         // check if it's not null
         if(val == nullptr) {
             std::cerr << "TypeError: Can not pass 'Non-Value' as argument." << std::endl;
             std::exit(EXIT_FAILURE);
         }
-
         args.push_back(val);
     }
 
-    // call the function
-    return (static_cast<FunctionValue *>(function))->call(args);
+    // call the user defined function
+	if (function->getType() == RuntimeValue::Type::FUNCTION)
+    {
+		auto fn = static_cast<FunctionValue*>(function)->getDeclaration();
+		auto body = fn->getBody();
+		auto params = fn->getParameters();
+		RuntimeValue* lastEvaluated = nullptr;
+		Environment newEnv = Environment(env);
+
+		// check if the number of arguments is correct
+		if (args.size() != params.size()) {
+			std::cerr << "TypeError: Expected " + std::to_string(params.size()) + " arguments, but got " + std::to_string(args.size()) << std::endl;
+			std::exit(EXIT_FAILURE);
+		}
+
+		// bind the arguments
+		for (size_t i = 0; i < params.size(); i++) {
+			auto param = static_cast<Argument*>(params[i]);
+			auto arg = args[i];
+			if (!isCorrectType(arg->getType(), param->getValueType())) {
+				std::cerr << "TypeError: Expected " + VariableDeclaration::valueTypeToString(param->getValueType());
+				std::cerr << " but got " + RuntimeValue::typeToString(arg->getType()) << std::endl;
+				std::exit(EXIT_FAILURE);
+			}
+			newEnv.defineVariable(param->getName(), arg);
+		}
+
+		// exexcute the function
+		for (auto stmt : body->getBody()) {
+			lastEvaluated = evaluate(stmt, &newEnv);
+			if (stmt->getType() == NodeType::RETURN) {
+				break;
+			}
+		}
+
+        return lastEvaluated;
+	}
+
+    // call the native function
+    return (static_cast<NativeFunctionValue *>(function))->call(args);
 }
 
 RuntimeValue * Interpreter::evalNotExpression(Not * expr, Environment * env)

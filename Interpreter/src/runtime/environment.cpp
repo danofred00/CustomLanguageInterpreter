@@ -79,9 +79,9 @@ void setupGlobalScope(Environment * env)
 void setupGlobalFunctions(Environment * env)
 {
     // SETUP `print` FUNCTION to display something in command line
-    env->defineVariable("print", new FunctionValue(printFunction));
+    env->defineVariable("print", new NativeFunctionValue(printFunction));
     // SETUP `read` FUNCTION to read something from command line
-    env->defineVariable("read", new FunctionValue(readFunction));
+    env->defineVariable("read", new NativeFunctionValue(readFunction));
     // SETUP `type` FUNCTION to get the type of something
-    env->defineVariable("type", new FunctionValue(typeFunction));
+    env->defineVariable("type", new NativeFunctionValue(typeFunction));
 }

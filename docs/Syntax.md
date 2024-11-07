@@ -26,3 +26,15 @@ Fonctions : <type> <identifier> ([<args>]) { <body> }
 + **number** : toutes les operations possibles sur les entiers et floatant (addition, soustraction, multiplication, division, modulo, negation, ...)
 + **string** : concatenation, size
 + **bool** : les operations logiques
+
+## Declaration de fonction
+Pour declarer une fonction, on utilise le mot cle `fn`.
+```
+fn somme(number x, number y) {
+    return x + y
+}
+
+fn sayHello(string name) {
+    print("Hello", name, "!")
+}
+```

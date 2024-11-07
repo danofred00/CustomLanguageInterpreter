@@ -54,6 +54,16 @@ private:
 	Statement * parseVariableDeclaration();
 
 	/**
+	* Parse argument declaration
+	*/
+	std::tuple<std::string, VariableDeclaration::ValueType> parseArgDeclaration(Token token);
+
+	/**
+	 * Parse function declaration statement
+	 */
+	Statement * parseFunctionDeclaration();
+
+	/**
 	 * Parse an assignment expression
 	 * Ex: x = 10; x = left = 10; x[1] = 0; etc...
 	 */

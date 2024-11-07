@@ -34,4 +34,7 @@ private:
     RuntimeValue * evalNotExpression(Not * expr, Environment * env);
 
     RuntimeValue * evalLogicExpression(LogicBinary * logic, Environment * env);
+
+	RuntimeValue* evalFunctionDeclaration(FunctionDeclaration* func, Environment* env);
+
 };
