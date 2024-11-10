@@ -19,6 +19,8 @@ public:
 
     bool exists(const std::string& name);
 
+    bool existsLocal(const std::string& name);
+
     Environment * resolve(const std::string& name);
 
     const Environment * getParent() const {

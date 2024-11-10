@@ -35,6 +35,8 @@ Statement* Parser::parseStatement()
 			return parseVariableDeclaration();
 		case TokenType::FN:
 			return parseFunctionDeclaration();
+		case TokenType::RETURN:
+			return parseReturnStatement();
 		default:
 			return parseExpression();
 	}
@@ -42,7 +44,7 @@ Statement* Parser::parseStatement()
 
 Expression* Parser::parseExpression()
 {
-	return parseLogicComparaisonExpression();
+	return parseAssignmentExpression();
 }
 
 Statement * Parser::parseVariableDeclaration() 
@@ -125,11 +127,18 @@ Statement * Parser::parseFunctionDeclaration()
 	return fn;
 }
 
+Statement * Parser::parseReturnStatement() 
+{
+	consumeToken(); // skip the return token
+	auto left = parseExpression();
+	return new ReturnStatement(left);
+}
+
 Expression* Parser::parsePrimaryExpression()
 {
 	auto token = consumeToken();
 	Expression * value = nullptr;
-
+	
 	switch (token.type)
 	{
 	// handle itentifiers
@@ -151,8 +160,6 @@ Expression* Parser::parsePrimaryExpression()
 	case TokenType::LOGIC_NOT:
 		value = parseExpression();
 		return static_cast<Expression *>(new Not(value));
-	case TokenType::RETURN:
-		return static_cast<Expression*>(new ReturnStatement(parseExpression()));
 	default:
 		std::cerr << "Syntax Error: Unable to parse Token " << token << std::endl;
 		std::exit(EXIT_FAILURE);
@@ -183,11 +190,11 @@ Expression * Parser::parseAdditiveExpressions()
 Expression * Parser::parseMultiplicativeExpression()
 {
 	auto binary = new BinaryExpression();
-	Expression* left = parsePrimaryExpression();
+	Expression* left = parseFunctionCallExpression();
 
 	while((pos->value == "*") || (pos->value == "/") || (pos->value == "%")) {
 		auto op = consumeToken().value;
-		auto right = parsePrimaryExpression();
+		auto right = parseFunctionCallExpression();
 		
 		// update values
 		binary->setLeft(left);
@@ -201,11 +208,11 @@ Expression * Parser::parseMultiplicativeExpression()
 
 Expression * Parser::parseAssignmentExpression()
 {
-	auto left = parseFunctionCallExpression();
+	auto left = parseLogicComparaisonExpression();
 
 	if((*pos).type == TokenType::EQUALS) {
 		consumeToken(); // skip the equals caracter
-		auto value = parseFunctionCallExpression();
+		auto value = parseLogicComparaisonExpression();
 		value = new AssignmentExpression(left, value);
 
 		// remove the last semicolon expression
@@ -251,7 +258,7 @@ Expression * Parser::parseCallExpression(Expression *caller)
 
 Expression * Parser::parseFunctionCallExpression()
 {
-	Expression * left = parseAdditiveExpressions();
+	Expression * left = parsePrimaryExpression();
 
 	if((*pos).type == TokenType::OPEN_PAREN) {
 		return parseCallExpression(left);
@@ -315,7 +322,7 @@ Statement * Parser::parseBlockStatement()
 
 Expression * Parser::parseLogicComparaisonExpression()
 {
-	Expression * left = parseAssignmentExpression();
+	Expression * left = parseAdditiveExpressions();
 	Expression * rigth = nullptr;
 	auto token = (*pos);
 

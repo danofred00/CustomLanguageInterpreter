@@ -56,12 +56,16 @@ RuntimeValue* Environment::getVariable(const std::string& name)
 
 void Environment::defineVariable(const std::string& name, RuntimeValue* value)
 {
-    if(exists(name)) {
+    if(existsLocal(name)) {
         throw std::runtime_error("Variable already defined");
     }
     this->variables[name] = value;
 }
 
+bool Environment::existsLocal(const std::string& name)
+{
+    return variables.find(name) != std::end(variables);
+}
 
 void setupGlobalScope(Environment * env)
 {

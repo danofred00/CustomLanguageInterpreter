@@ -1,5 +1,6 @@
 #include <runtime/interpreter.hpp>
 #include <runtime/utils.hpp>
+#include <runtime/exceptions/return_exception.hpp>
 
 RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
 {
@@ -36,7 +37,7 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
         case NodeType::FUNCTION_DECLARATION:
             return evalFunctionDeclaration(static_cast<FunctionDeclaration*>(statement), env);
         case NodeType::RETURN:
-            return evaluate((static_cast<ReturnStatement*>(statement))->getValue(), env);
+            return evalReturnStatement(static_cast<ReturnStatement*>(statement), env);
         // Not expression
         case NodeType::NOT:
             return evalNotExpression(static_cast<Not *>(statement), env);
@@ -57,7 +58,7 @@ RuntimeValue * Interpreter::evalVariableDeclaration(VariableDeclaration * varDec
     auto identifier = varDecl->getIdentifier();
     auto type = varDecl->getValueType();
     // check if the variable is already defined
-    if(env->exists(identifier)) {
+    if(env->existsLocal(identifier)) {
         std::cerr << "Runtime Error: Variable " + identifier + " is already defined." << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -74,20 +75,26 @@ RuntimeValue * Interpreter::evalVariableDeclaration(VariableDeclaration * varDec
     return value;
 }
 
-
-RuntimeValue* Interpreter::evalFunctionDeclaration(FunctionDeclaration* func, Environment* env)
+RuntimeValue * Interpreter::evalFunctionDeclaration(FunctionDeclaration* func, Environment* env)
 {
 	auto name = func->getName();
     FunctionValue* fn = nullptr;
     
 	// check if the function is already defined
-    if (env->exists(name)) {
+    if (env->existsLocal(name)) {
         throw std::runtime_error("RuntimeError: Function " + name + " is already defined.");
     }
 
 	fn = new FunctionValue(name, func);
 	env->defineVariable(name, fn);
     return nullptr;
+}
+
+RuntimeValue * Interpreter::evalReturnStatement(ReturnStatement * stmt, Environment * env)
+{
+    auto value = evaluate(stmt->getValue(), env);
+    throw ReturnException(value);
+    //return value;
 }
 
 /**
@@ -97,10 +104,11 @@ RuntimeValue* Interpreter::evalFunctionDeclaration(FunctionDeclaration* func, En
 RuntimeValue * Interpreter::evalProgram(ProgramStatement * program,  Environment * env)
 {
     RuntimeValue * lastEvaluated = nullptr;
-
+    auto scopeEnv = Environment(env);
+    
     for(auto stmt : program->getBody()) {
         // delete lastEvaluated;
-        lastEvaluated = evaluate(stmt, env);
+        lastEvaluated = evaluate(stmt, &scopeEnv);
 		// break if return statement
         if (stmt->getType() == NodeType::RETURN) {
 			break;
@@ -203,7 +211,7 @@ RuntimeValue * Interpreter::evalAssignmentExpression(AssignmentExpression * expr
 RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * expr, Environment * env)
 {
     auto caller = static_cast<Identifier *>(expr->getCaller());
-    std::   vector<RuntimeValue *> args {};
+    std::vector<RuntimeValue *> args {};
 
     // check if the function is defined
     if(!env->exists(caller->getIdentifier())) {
@@ -213,6 +221,7 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 
     // get the function
     auto function = env->getVariable(caller->getIdentifier());
+    auto scopeEnv = Environment(env);
 
     if (function->getType() != RuntimeValue::Type::NATIVE_FUNCTION && function->getType() != RuntimeValue::Type::FUNCTION) {
         throw std::runtime_error("Runtime Error: " + caller->getIdentifier() + " is not a function.");
@@ -220,7 +229,7 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 
     // evaluate the arguments
     for(auto arg : expr->getArguments()) {
-        auto val = evaluate(arg, env);
+        auto val = evaluate(arg, &scopeEnv);
         // check if it's not null
         if(val == nullptr) {
             std::cerr << "TypeError: Can not pass 'Non-Value' as argument." << std::endl;
@@ -236,7 +245,7 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 		auto body = fn->getBody();
 		auto params = fn->getParameters();
 		RuntimeValue* lastEvaluated = nullptr;
-		Environment newEnv = Environment(env);
+		auto newEnv = new Environment(scopeEnv);
 
 		// check if the number of arguments is correct
 		if (args.size() != params.size()) {
@@ -253,16 +262,17 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 				std::cerr << " but got " + RuntimeValue::typeToString(arg->getType()) << std::endl;
 				std::exit(EXIT_FAILURE);
 			}
-			newEnv.defineVariable(param->getName(), arg);
+			newEnv->defineVariable(param->getName(), arg);
 		}
 
 		// exexcute the function
-		for (auto stmt : body->getBody()) {
-			lastEvaluated = evaluate(stmt, &newEnv);
-			if (stmt->getType() == NodeType::RETURN) {
-				break;
-			}
-		}
+        try{
+            for(auto &stmt : (fn->getBody())->getBody()) {
+                lastEvaluated = evaluate(stmt, newEnv);
+            }
+        } catch (ReturnException &e) {
+            lastEvaluated = e.getValue();
+        }
 
         return lastEvaluated;
 	}
@@ -310,24 +320,16 @@ RuntimeValue * Interpreter::evalConditionalExpression(ConditionalExpression * ex
 
     auto execThen = std::any_cast<bool>(condition->getValue());
     if(execThen) {
-        lastEvaluated = executeIsolatedBloc(expr->getThenBlock(), env);
+        lastEvaluated = evaluate(static_cast<BlocStatement*>(expr->getThenBlock()), env);
     } else {
         // exec else block if it exists
         auto elseBlock = expr->getElseBlock();
         if(elseBlock != nullptr) {
-            lastEvaluated = evaluate(elseBlock, env);
+            lastEvaluated = evaluate(static_cast<BlocStatement*>(elseBlock), env);
         }
     }
 
     return lastEvaluated;
-}
-
-RuntimeValue * Interpreter::executeIsolatedBloc(Statement * statement, Environment * parent)
-{
-    Environment env = Environment(parent);
-    // evaluate
-    auto result = evaluate(statement, &env);
-    return result;
 }
 
 /**

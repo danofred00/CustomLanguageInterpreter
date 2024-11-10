@@ -1,0 +1,16 @@
+# create a recursive factorial function
+fn factorial(number x) {
+    if(x<= 1) {
+        return 1
+    }
+    return x * factorial(x-1)
+}
+
+# expect 1
+print("!1 =", factorial(1))
+
+# expect 2
+print("!2 =", factorial(2))
+
+# expect 120
+print("!5 =", factorial(5))

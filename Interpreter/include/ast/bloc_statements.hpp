@@ -17,6 +17,8 @@ public:
     NodeType getType() {
         return NodeType::BLOCK_PROGRAM;
     }
+
+    std::string toString() override;
 };
 
 /**
@@ -98,11 +100,11 @@ public:
     }
 
     std::string toString() override {
-        std::string str = "FunctionDeclaration<" + name + ", [";
+        std::string str = "FunctionDeclaration<\nname=" + name + ",\n args=[";
         for (auto param : parameters) {
             str += param->toString() + ", ";
         }
-        str += "]>";
+        str += "]\n body=" + body->toString() + ">";
         return str;
     }
 

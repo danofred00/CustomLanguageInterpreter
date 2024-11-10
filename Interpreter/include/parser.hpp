@@ -64,6 +64,11 @@ private:
 	Statement * parseFunctionDeclaration();
 
 	/**
+	 * Parse return statement
+	 */
+	Statement * parseReturnStatement();
+
+	/**
 	 * Parse an assignment expression
 	 * Ex: x = 10; x = left = 10; x[1] = 0; etc...
 	 */

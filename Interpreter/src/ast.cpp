@@ -10,6 +10,8 @@ std::string Statement::nodeTypeToString(NodeType type)
 	{
 	case NodeType::PROGRAM:
 		return "PROGRAM";
+	case NodeType::BLOCK_PROGRAM:
+		return "BLOCK_PROGRAM";
 	case NodeType::NUMBER_LITERAL:
 		return "NUMBER_LITERAL";
 	case NodeType::STRING_LITERAL:
@@ -150,3 +152,12 @@ std::string ConditionalExpression::toString() {
 	return ss.str();
 }
 
+std::string BlocStatement::toString() {
+	std::stringstream ss {};
+	ss << "BlocStatement { \n";
+	for(auto stmt : getBody()) {
+		ss << "\t" << stmt->toString() << "\n";
+	}
+	ss << "}";
+	return ss.str();
+}
