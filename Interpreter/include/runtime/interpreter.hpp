@@ -37,4 +37,6 @@ private:
 
     RuntimeValue * evalReturnStatement(ReturnStatement * stmt, Environment * env);
 
+    RuntimeValue * evalBlockStatement(BlocStatement * block, Environment * env);
+
 };

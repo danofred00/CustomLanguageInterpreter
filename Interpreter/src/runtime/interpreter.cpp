@@ -21,6 +21,7 @@ RuntimeValue * Interpreter::evaluate(Statement * statement, Environment * env)
         case NodeType::IDENTIFIER:
             return evalIdentifier(static_cast<Identifier*>(statement), env);
         case NodeType::BLOCK_PROGRAM:
+            return evalBlockStatement(static_cast<BlocStatement*>(statement), env);
         case NodeType::PROGRAM:
             return evalProgram(static_cast<ProgramStatement*>(statement), env);
         case NodeType::ASSIGNMENT:
@@ -97,6 +98,19 @@ RuntimeValue * Interpreter::evalReturnStatement(ReturnStatement * stmt, Environm
     //return value;
 }
 
+RuntimeValue * Interpreter::evalBlockStatement(BlocStatement * block, Environment * env)
+{
+    RuntimeValue * lastEvaluated = nullptr;
+    Environment newEnv(env);
+
+    for(auto stmt : block->getBody()) {
+        lastEvaluated = evaluate(stmt, &newEnv);
+    }
+
+    return lastEvaluated;
+}
+
+
 /**
  * EVALUATES EXPRESSIONS
  */
@@ -104,15 +118,14 @@ RuntimeValue * Interpreter::evalReturnStatement(ReturnStatement * stmt, Environm
 RuntimeValue * Interpreter::evalProgram(ProgramStatement * program,  Environment * env)
 {
     RuntimeValue * lastEvaluated = nullptr;
-    auto scopeEnv = Environment(env);
     
     for(auto stmt : program->getBody()) {
         // delete lastEvaluated;
-        lastEvaluated = evaluate(stmt, &scopeEnv);
+        lastEvaluated = evaluate(stmt, env);
 		// break if return statement
-        if (stmt->getType() == NodeType::RETURN) {
-			break;
-		}
+        // if (stmt->getType() == NodeType::RETURN) {
+		// 	break;
+		// }
     }
 
     return lastEvaluated;
@@ -267,9 +280,7 @@ RuntimeValue * Interpreter::evalFunctionCallExpression(CallFunctionExpression * 
 
 		// exexcute the function
         try{
-            for(auto &stmt : (fn->getBody())->getBody()) {
-                lastEvaluated = evaluate(stmt, newEnv);
-            }
+            evaluate(body, newEnv);
         } catch (ReturnException &e) {
             lastEvaluated = e.getValue();
         }
